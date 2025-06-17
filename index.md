@@ -112,7 +112,7 @@ One of the best parts about Github is that you can view how other people set up 
 | 12 | 7x9 .8mm PCB | 1
 | 13 | M3x5mm Screw | 8
 | 14 | M3x8mm Screw | 2
-| 15 | Double-Pass; M3x9mm | 4
+| 15 | Double-Pass M3x9mm | 4
 | 16 | Single-Head 5+6mm Hexagonal Column | 4
 | 17 | AAA Battery Case | 1
 | 18 | Acrylic Shell | 6
