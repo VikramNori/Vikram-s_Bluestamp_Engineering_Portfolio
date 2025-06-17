@@ -106,14 +106,14 @@ One of the best parts about Github is that you can view how other people set up 
 | 6 | Red Self-Switch Cap | 1 
 | 7 | 3631AS Digitron Display | 1
 | 8 | STC8H3K64S2 IC Chip | 1
-| 9 | 1088BS; 8x8 mm LED dot matrix module | 2
+| 9 | 1088BS 8x8 mm LED dot matrix module | 2
 | 10 | A24 12x12x7 .3mm Button | 6
 | 11 | A24 12x12x7 .3mm Button Cap | 6
 | 12 | 7x9 .8mm PCB | 1
 | 13 | M3x5mm Screw | 8
 | 14 | M3x8mm Screw | 2
 | 15 | Double-Pass; M3x9mm | 4
-| 16 | Single-Head; 5+6mm Hexagonal Column | 4
+| 16 | Single-Head 5+6mm Hexagonal Column | 4
 | 17 | AAA Battery Case | 1
 | 18 | Acrylic Shell | 6
  
