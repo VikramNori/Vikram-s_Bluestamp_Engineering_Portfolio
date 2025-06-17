@@ -13,7 +13,7 @@ You should comment out all portions of your portfolio that you have not complete
 
 **Replace the BlueStamp logo below with an image of yourself and your completed project. Follow the guide [here](https://tomcam.github.io/least-github-pages/adding-images-github-pages-site.html) if you need help.**
 
-![Headstone Image](logo.svg)
+![Headstone Image](Untitled.png)
   
 # Final Milestone
 
@@ -89,5 +89,34 @@ One of the best parts about Github is that you can view how other people set up 
 - [Example 3](https://arneshkumar.github.io/arneshbluestamp/)
 
 # Starter Project: Retro Arcade Console
-! (logo.svg)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/i_2Iimyn7tw?si=MvCyhHR4sTnx0RO8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+# Picture of Retro Arcade Console
+![Headstone Image](Untitled.png)
+
+# Bill of Materials
+
+| **Number** | **Part** | **Quantity** |
+|:--:|:--:|:--:|
+| 1 | 12mm 5V Passive Buzzer | 1
+| 2 | 220uF 16V Electric Capacitor | 1
+| 3 | 4-Pin 90° Micro USB |1
+| 4 | 50cm Power Cable (For Micro USB) | 1
+| 5 | 8x8 mm Self-Switch | 1
+| 6 | Red Self-Switch Cap | 1 
+| 7 | 3631AS Digitron Display | 1
+| 8 | STC8H3K64S2 IC Chip | 1
+| 9 | 1088BS; 8x8 mm LED dot matrix module | 2
+| 10 | A24 12x12x7 .3mm Button | 6
+| 11 | A24 12x12x7 .3mm Button Cap | 6
+| 12 | 7x9 .8mm PCB | 1
+| 13 | M3x5mm Screw | 8
+| 14 | M3x8mm Screw | 2
+| 15 | Double-Pass; M3x9mm | 4
+| 16 | Single-Head; 5+6mm Hexagonal Column | 4
+| 17 | AAA Battery Case | 1
+| 18 | Acrylic Shell | 6
+ 
+
+
 To watch the BSE tutorial on how to create a portfolio, click here.
