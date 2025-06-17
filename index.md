@@ -89,5 +89,5 @@ One of the best parts about Github is that you can view how other people set up 
 - [Example 3](https://arneshkumar.github.io/arneshbluestamp/)
 
 # Starter Project: Retro Arcade Console
-
+! (logo.svg)
 To watch the BSE tutorial on how to create a portfolio, click here.
