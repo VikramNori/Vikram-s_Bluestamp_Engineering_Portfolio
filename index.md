@@ -11,9 +11,7 @@ You should comment out all portions of your portfolio that you have not complete
 |:--:|:--:|:--:|:--:|
 | Vikram N | Cal High | Aerospace Engineering | Incoming Sophomore
 
- [here](https://tomcam.github.io/least-github-pages/adding-images-github-pages-site.html) 
-
-![Headstone Image](Untitled.png)
+![Headstone Image](headshot.png)
   
 # Final Milestone
 
@@ -89,8 +87,9 @@ One of the best parts about Github is that you can view how other people set up 
 - [Example 3](https://arneshkumar.github.io/arneshbluestamp/)
 
 # Starter Project: Retro Arcade Console
-<iframe width="560" height="315" src="https://www.youtube.com/embed/i_2Iimyn7tw?si=MvCyhHR4sTnx0RO8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="500" height="281" src="https://www.youtube.com/embed/i_2Iimyn7tw?si=MvCyhHR4sTnx0RO8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
+# Summary of Build 
 # Picture of Retro Arcade Console
 ![Headstone Image](Untitled.png)
 
