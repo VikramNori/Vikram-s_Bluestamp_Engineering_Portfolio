@@ -90,6 +90,7 @@ One of the best parts about Github is that you can view how other people set up 
 <iframe width="500" height="281" src="https://www.youtube.com/embed/i_2Iimyn7tw?si=MvCyhHR4sTnx0RO8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 # Summary of Build 
+Since it was a starter project, the build process was easy. There were instructions that I had to follow and I followed them with relative ease. The only difficulty I had was that I soldered one of the diplay panels incorrectly and it wasn't straight. the way it was oriented made it awkward to press the top button. Other than that, there weren't any difficulties.
 # Picture of Retro Arcade Console
 ![Headstone Image](Untitled.png)
 
