@@ -35,7 +35,8 @@ For your second milestone, explain what you've worked on since your previous mil
 - Previous challenges you faced that you overcame
 - What needs to be completed before your final milestone 
 '''
-
+# Summary of Second Milestone Build Process
+My second milestone was to connect the AdaFruit PyPortal to the internet so it 
 -->
 
 # First Milestone
