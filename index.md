@@ -122,6 +122,19 @@ The project tracks the position of the International Space Station and tells you
 
 My first milestone was loading the PyPortal with all the files required to run the program and building the outside shell of the PyPortal. Loading the PyPortal with all the files was easy. Making the shell for the PyPortal also proved to be not much harder. Even without instructions, I was able to put together the shell in about 30 to 45 minutes. I plan to complete this project in the next week or the next 2 weeks.
 
+# PyPortal Shell Build Process
+![Headstone Image](pyportalbare.png)
+
+
+(Above) This is the PyPortal without the shell at all
+
+![Headstone Image](pyportalbuildstep1.png)
+
+(Above) This is the PyPortal above the back of the shell, about to be screwed in
+
+![Headstone Image](pyportalisoback.png)
+
+(Above) This is an isometric view of the back of the PyPortal
 
 # Schematics 
 Here's where you'll put images of your schematics. [Tinkercad](https://www.tinkercad.com/blog/official-guide-to-tinkercad-circuits) and [Fritzing](https://fritzing.org/learning/) are both great resoruces to create professional schematic diagrams, though BSE recommends Tinkercad becuase it can be done easily and for free in the browser. 
