@@ -7,6 +7,9 @@ Have you ever thought about the International Space Station? The permanently man
 
 ![Headstone Image](headshot.png)
 
+# Picture of Finished ISS Tracker
+![Headstone Image](circuitpython_pp_iss_banner.jpg)
+
 
 <!--
 # Final Milestone 
@@ -33,7 +36,84 @@ My second milestone was connecting the Adafruit PyPortal to the Internet to find
 Some challenges I faced in this milestone were that my code did not work several times. When making my settings.toml file and testing it out with a test variable, the code.py file did not import the test variable and print it. I tried troubleshooting this by putting all the lines in one by one to see which one was faulty. But when I typed them in that way to find out which one was faulty, they all worked. Now, one of the ways I think it didn't work before was because I messed up the quotation marks, changing what were the variable names and what were the actual values of the variables themselves. After I cleared that up, I misread the instructions to create the code that connects the PyPortal to the wifi. The instructions told me to input the code in the code.py file I've been using since the beginning of the project, but I created another file called code.py (which was also created incorrectly), and inputted the code incorrectly. This created a duplicate code.py file, which had faulty code. Whenever I tried to run my settings.toml code, I kept getting errors on code.py. The problems kept persisting until I tracked down and deleted the faulty file. After I did that, the code finally worked.
 
 The next milestone is getting the PyPortal to track the location of the ISS and display it on a map.
+```python
+import os
 
+from os import getenv
+
+import adafruit_connection_manager
+import adafruit_requests
+import board
+import busio
+from digitalio import DigitalInOut
+import board
+import displayio
+from adafruit_bitmap_font import bitmap_font
+
+from adafruit_esp32spi import adafruit_esp32spi
+
+ssid = getenv("CIRCUITPY_WIFI_SSID")
+password = getenv("CIRCUITPY_WIFI_PASSWORD")
+
+print("ESP32 SPI webclient test")
+
+TEXT_URL = "http://wifitest.adafruit.com/testwifi/index.html"
+JSON_URL = "http://wifitest.adafruit.com/testwifi/sample.json"
+
+esp32_cs = DigitalInOut(board.ESP_CS)
+esp32_ready = DigitalInOut(board.ESP_BUSY)
+esp32_reset = DigitalInOut(board.ESP_RESET)
+
+if "SCK1" in dir(board):
+    spi = busio.SPI(board.SCK1, board.MOSI1, board.MISO1)
+else:
+    spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
+esp = adafruit_esp32spi.ESP_SPIcontrol(spi, esp32_cs, esp32_ready, esp32_reset)
+
+pool = adafruit_connection_manager.get_radio_socketpool(esp)
+ssl_context = adafruit_connection_manager.get_radio_ssl_context(esp)
+requests = adafruit_requests.Session(pool, ssl_context)
+
+if esp.status == adafruit_esp32spi.WL_IDLE_STATUS:
+    print("ESP32 found and in idle mode")
+print("Firmware vers.", esp.firmware_version)
+print("MAC addr:", ":".join("%02X" % byte for byte in esp.MAC_address))
+
+for ap in esp.scan_networks():
+    print("\t%-23s RSSI: %d" % (ap.ssid, ap.rssi))
+
+print("Connecting to AP...")
+while not esp.is_connected:
+    try:
+        esp.connect_AP(ssid, password)
+    except OSError as e:
+        print("could not connect to AP, retrying: ", e)
+        continue
+print("Connected to", esp.ap_info.ssid, "\tRSSI:", esp.ap_info.rssi)
+print("My IP address is", esp.ipv4_address)
+print("IP lookup adafruit.com: %s" % esp.pretty_ip(esp.get_host_by_name("adafruit.com")))
+print("Ping google.com: %d ms" % esp.ping("google.com"))
+
+# esp._debug = True
+print("Fetching text from", TEXT_URL)
+r = requests.get(TEXT_URL)
+print("-" * 40)
+print(r.text)
+print("-" * 40)
+r.close()
+
+print()
+print("Fetching json from", JSON_URL)
+r = requests.get(JSON_URL)
+print("-" * 40)
+print(r.json())
+print("-" * 40)
+r.close()
+
+print("Done!")
+
+
+```
 # First Milestone
 <iframe width="560" height="315" src="https://www.youtube.com/embed/YfIg-njLHq4?si=V05FRoKpC91G4Krp" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
