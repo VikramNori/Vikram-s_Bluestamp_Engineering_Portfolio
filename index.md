@@ -130,7 +130,9 @@ My first milestone was loading the PyPortal with all the files required to run t
 
 ![Headstone Image](pyportalbuildstep1.png)
 
-(Above) This is the PyPortal above the back of the shell, about to be screwed in
+(Above) This is the PyPortal above the back of the shell
+
+
 
 ![Headstone Image](pyportalisoback.png)
 
