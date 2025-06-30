@@ -114,6 +114,11 @@ print("Done!")
 
 
 ```
+![Headstone Image](pyportalworking.png)
+
+(Above) This is the PyPortal, currently connected to the internet
+
+
 # First Milestone
 <iframe width="560" height="315" src="https://www.youtube.com/embed/YfIg-njLHq4?si=V05FRoKpC91G4Krp" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
@@ -128,10 +133,30 @@ My first milestone was loading the PyPortal with all the files required to run t
 
 (Above) This is the PyPortal without the shell at all
 
+![Headstone Image](pyportalback.png)
+
+
+(Above) This is the PyPortal's back shell
+
 ![Headstone Image](pyportalbuildstep1.png)
+
 
 (Above) This is the PyPortal above the back of the shell
 
+![Headstone Image](pyportalscrewless.png)
+
+
+(Above) This is the PyPortal and all the component of its shell layered together, ready to be screwed in
+
+![Headstone Image](pyportalscrewed.png)
+
+
+(Above) This is the Pyportal with all the screws in
+
+![Headstone Image](pyportalside.png)
+![Headstone Image](pyportalotherside.png)
+
+(Above) These are both the side views of the PyPortal
 
 
 ![Headstone Image](pyportalisoback.png)
