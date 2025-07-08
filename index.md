@@ -33,33 +33,41 @@ For your final milestone, explain the outcome of your project. Key details to in
 # Summary of Second Milestone Build Process
 My second milestone was connecting the Adafruit PyPortal to the Internet to find and track the ISS's location. To do that, I had to create a settings.toml file. One would create a settings.toml file to make sure one can share their code without sharing their sensitive network information. The settings.toml file contains the name of the network and its password, while the code.py file imports the variables by importing the os library with "import os" and uses them to connect to the internet. A surprising part of this project so far has been the fact that my first 2 milestones have just been preparations for the third milestone, where I assume the bulk of the work will be.
 
-Some challenges I faced in this milestone were that my code did not work several times. When making my settings.toml file and testing it out with a test variable, the code.py file did not import the test variable and print it. I tried troubleshooting this by putting all the lines in one by one to see which one was faulty. But when I typed them in that way to find out which one was faulty, they all worked. Now, one of the ways I think it didn't work before was because I messed up the quotation marks, changing what were the variable names and what were the actual values of the variables themselves. After I cleared that up, I misread the instructions to create the code that connects the PyPortal to the wifi. The instructions told me to input the code in the code.py file I've been using since the beginning of the project, but I created another file called code.py (which was also created incorrectly), and inputted the code incorrectly. This created a duplicate code.py file, which had faulty code. Whenever I tried to run my settings.toml code, I kept getting errors on code.py. The problems kept persisting until I tracked down and deleted the faulty file. After I did that, the code finally worked.
+One challenge I faced in this milestone was that my code did not work several times. When making my settings.When testing the toml file with a test variable, the code.py file failed to import and print the test variable. I tried troubleshooting this by testing each line individually to see which one was faulty. But when I typed them in that way to find out which one was faulty, they all worked. Now, one of the ways I think it didn't work before was because I messed up the quotation marks, changing what were the variable names and what were the actual values of the variables themselves. After I cleared that up, I misread the instructions to create the code that connects the PyPortal to the wifi. The instructions told me to input the code in the code.py file I've been using since the beginning of the project, but I created another file called code.py (which was also created incorrectly), and inputted the code incorrectly. This created a duplicate code.py file, which had faulty code. Whenever I tried to run my settings.toml code, I kept getting errors on code.py. The problems kept persisting until I tracked down and deleted the faulty file. After I did that, the code finally worked.
 
 The next milestone is getting the PyPortal to track the location of the ISS and display it on a map.
 ```python
+#os gives access to many different systems and environment functions
 import os
-
+#getnev(VARIABLE) retrieves values from the settings.toml file
 from os import getenv
 
+#These libraries allow you to make HTTP requests like GET and POST over the internet
 import adafruit_connection_manager
 import adafruit_requests
+#board, busio, and digitalio handle pin assignments
 import board
 import busio
 from digitalio import DigitalInOut
-import board
+#displayio is used for screen handling
 import displayio
+#bitmap font allows the usage of custom fonts
 from adafruit_bitmap_font import bitmap_font
-
+#This is the ESP32 co-processor driver to control Wi-Fi via SPI
 from adafruit_esp32spi import adafruit_esp32spi
 
+#This loads the wifi and password from the settings.toml file
 ssid = getenv("CIRCUITPY_WIFI_SSID")
 password = getenv("CIRCUITPY_WIFI_PASSWORD")
 
+#This outputs a label for the test
 print("ESP32 SPI webclient test")
 
+#These are test URLs. One returns plain text, and the other returns JSON 
 TEXT_URL = "http://wifitest.adafruit.com/testwifi/index.html"
 JSON_URL = "http://wifitest.adafruit.com/testwifi/sample.json"
 
+#These configure the control pins for communicating with the ESP32 chip
 esp32_cs = DigitalInOut(board.ESP_CS)
 esp32_ready = DigitalInOut(board.ESP_BUSY)
 esp32_reset = DigitalInOut(board.ESP_RESET)
