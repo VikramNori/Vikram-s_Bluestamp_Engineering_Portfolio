@@ -14,7 +14,7 @@ Have you ever thought about the International Space Station? The permanently man
 <!--
 # Final Milestone 
 
-**Don't forget to replace the text below with the embedding for your milestone video. Go to YouTube, click Share -> Embed, and copy and paste the code to replace what's below.**
+
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/F7M7imOVGug" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
@@ -23,7 +23,8 @@ For your final milestone, explain the outcome of your project. Key details to in
 - What your biggest challenges and triumphs were at BSE
 - A summary of key topics you learned about
 - What you hope to learn in the future after everything you've learned at BSE
-
+# Summary of Final Milestone Build Process
+My final milestone was getting the PyPortal to display a bitmap of the Mercator Projection of the Earth, connect to the internet, find the location of the ISS, Display that location on the screen, and display the local date and time. To do that, I had to Import a bitmap of the Mercator map projection, convert longitude and latitude coordinates to x and y points since longitude and latitude are made for a sphere
 -->
 
 # Second Milestone
@@ -31,55 +32,63 @@ For your final milestone, explain the outcome of your project. Key details to in
 
 
 # Summary of Second Milestone Build Process
-My second milestone was connecting the Adafruit PyPortal to the Internet to find and track the ISS's location. To do that, I had to create a settings.toml file. One would create a settings.toml file to make sure one can share their code without sharing their sensitive network information. The settings.toml file contains the name of the network and its password, while the code.py file imports the variables by importing the os library with "import os" and uses them to connect to the internet. A surprising part of this project so far has been the fact that my first 2 milestones have just been preparations for the third milestone, where I assume the bulk of the work will be.
+My second milestone was connecting the Adafruit PyPortal to the Internet to find and track the ISS's location. To do that, I had to create a settings.toml file. One would create a settings.toml file to make sure one can share their code without sharing their sensitive network information. The settings.toml file contains the name of the network and its password, while the code.py file imports the variables by importing the os library with "import os" and uses them to connect to the internet. A surprising aspect of this project so far has been that my first two milestones have primarily been preparations for the third milestone, where I anticipate the bulk of the work will be.
 
-One challenge I faced in this milestone was that my code did not work several times. When making my settings.When testing the toml file with a test variable, the code.py file failed to import and print the test variable. I tried troubleshooting this by testing each line individually to see which one was faulty. But when I typed them in that way to find out which one was faulty, they all worked. Now, one of the ways I think it didn't work before was because I messed up the quotation marks, changing what were the variable names and what were the actual values of the variables themselves. After I cleared that up, I misread the instructions to create the code that connects the PyPortal to the wifi. The instructions told me to input the code in the code.py file I've been using since the beginning of the project, but I created another file called code.py (which was also created incorrectly), and inputted the code incorrectly. This created a duplicate code.py file, which had faulty code. Whenever I tried to run my settings.toml code, I kept getting errors on code.py. The problems kept persisting until I tracked down and deleted the faulty file. After I did that, the code finally worked.
+One challenge I faced in this milestone was that my code failed several times. When making my settings. When testing the toml file with a test variable, the code.py file failed to import and print the test variable. I attempted to troubleshoot the issue by testing each line individually to identify the faulty one. But when I typed them in that way to find out which one was faulty, they all worked. Now, one of the ways I think it didn't work before was because I messed up the quotation marks, changing what were the variable names and what were the actual values of the variables themselves. After I cleared that up, I misread the instructions to create the code that connects the PyPortal to the wifi. The instructions told me to input the code in the code.py file I've been using since the beginning of the project, but I created another file called code.py (which was also created incorrectly), and inputted the code incorrectly. This created a duplicate code.py file, which had faulty code. Whenever I tried to run my settings.toml code, I kept getting errors on code.py. The problems kept persisting until I tracked down and deleted the faulty file. After I did that, the code finally worked.
 
 The next milestone is getting the PyPortal to track the location of the ISS and display it on a map.
 ```python
-#os gives access to many different systems and environment functions
+#This imports the os module, allowing access to file paths, environment tables, and system-level functions.
 import os
-#getnev(VARIABLE) retrieves values from the settings.toml file
+#getnev() get environment variables. In CircuitPython, this usually refers to values in a settings.toml file, usually WiFi credentials
 from os import getenv
 
-#These libraries allow you to make HTTP requests like GET and POST over the internet
+#This helps manage networking with different backends like ESP32.
 import adafruit_connection_manager
+#This imports a simplified HTTP request library similar to Python's requests.
 import adafruit_requests
-#board, busio, and digitalio handle pin assignments
+#This maps hardware pins on your board
 import board
+#This is used to initalize the SPI bus
 import busio
+#This sets pins as digital inputs and digital outputs
 from digitalio import DigitalInOut
-#displayio is used for screen handling
+#This provides classes and functions for drawing graphics to the screen
 import displayio
-#bitmap font allows the usage of custom fonts
+#This allows loading custom .bdf or .pcf bitmap fonts for display text (However this is not used in the code)
 from adafruit_bitmap_font import bitmap_font
-#This is the ESP32 co-processor driver to control Wi-Fi via SPI
+#This is the core library for controlling the ESP32 WiFi co-processor over SPI
 from adafruit_esp32spi import adafruit_esp32spi
 
-#This loads the wifi and password from the settings.toml file
+#Loads the WiFi credentials from the settings.toml file and keeps them out of the code
 ssid = getenv("CIRCUITPY_WIFI_SSID")
 password = getenv("CIRCUITPY_WIFI_PASSWORD")
 
-#This outputs a label for the test
+#This is the debug message printed when the program starts running
 print("ESP32 SPI webclient test")
 
-#These are test URLs. One returns plain text, and the other returns JSON 
+#These are URLs hosted by AdaFruit for basic connectivity and JSON pairing tests 
 TEXT_URL = "http://wifitest.adafruit.com/testwifi/index.html"
 JSON_URL = "http://wifitest.adafruit.com/testwifi/sample.json"
 
-#These configure the control pins for communicating with the ESP32 chip
+#Sets up the chip-select, busy and reset pins to control the ESP32 Module
 esp32_cs = DigitalInOut(board.ESP_CS)
 esp32_ready = DigitalInOut(board.ESP_BUSY)
 esp32_reset = DigitalInOut(board.ESP_RESET)
 
+#Some boards (like SCK1) support multiple SPI ports. The code picks the secondary one if it exists, or else it defaults to the primary
 if "SCK1" in dir(board):
     spi = busio.SPI(board.SCK1, board.MOSI1, board.MISO1)
 else:
     spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
+#Initalizes communication with the ESP32 over SPI using previously defined pins
 esp = adafruit_esp32spi.ESP_SPIcontrol(spi, esp32_cs, esp32_ready, esp32_reset)
 
+#This sets up socketpool for internet communication
 pool = adafruit_connection_manager.get_radio_socketpool(esp)
+#This sets up ssl_context for HTTPS
 ssl_context = adafruit_connection_manager.get_radio_ssl_context(esp)
+#This sets up the requests session for sending HTTP GET/POST requests
 requests = adafruit_requests.Session(pool, ssl_context)
 
 if esp.status == adafruit_esp32spi.WL_IDLE_STATUS:
@@ -170,9 +179,6 @@ My first milestone was loading the PyPortal with all the files required to run t
 ![Headstone Image](pyportalisoback.png)
 
 (Above) This is an isometric view of the back of the PyPortal
-
-# Schematics 
-Here's where you'll put images of your schematics. [Tinkercad](https://www.tinkercad.com/blog/official-guide-to-tinkercad-circuits) and [Fritzing](https://fritzing.org/learning/) are both great resoruces to create professional schematic diagrams, though BSE recommends Tinkercad becuase it can be done easily and for free in the browser. 
 
 
 # Bill of Materials
