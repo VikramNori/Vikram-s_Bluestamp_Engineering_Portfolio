@@ -24,9 +24,153 @@ For your final milestone, explain the outcome of your project. Key details to in
 - A summary of key topics you learned about
 - What you hope to learn in the future after everything you've learned at BSE
 # Summary of Final Milestone Build Process
-My final milestone was getting the PyPortal to display a bitmap of the Mercator Projection of the Earth, connect to the internet, find the location of the ISS, Display that location on the screen, and display the local date and time. To do that, I had to Import a bitmap of the Mercator map projection, convert longitude and latitude coordinates to x and y points since longitude and latitude are made for a sphere
 -->
 
+My final milestone was getting the PyPortal to display a bitmap of the Mercator Projection of the Earth, connect to the internet, find the location of the ISS, Display that location on the screen, and display the local date and time. To do that, I had to Import a bitmap of the Mercator map projection, convert longitude and latitude coordinates to x and y points since longitude and latitude are made for a sphere
+# Code
+
+```python
+# This is imported for timekeeping and finding the local time
+import time
+# This is imported to calculate mathematical operations
+import math
+# This is imported to access PyPortal's hardware pins and display
+import board
+# This is imported to display graphics on the PyPortal display 
+import displayio
+# This is imported for the usage of built-in fonts for text labels
+from terminalio import FONT
+# This is imported 
+from adafruit_pyportal import PyPortal
+from adafruit_display_shapes.circle import Circle
+from adafruit_display_text.label import Label
+
+
+MARK_SIZE = 10           
+MARK_COLOR = 0xFF3030    
+MARK_THICKNESS = 5       
+TRAIL_LENGTH = 200       
+TRAIL_COLOR = 0xFFFF00
+# Color of the    
+DATE_COLOR = 0x111111    
+TIME_COLOR = 0x111111   
+LAT_MAX = 80             
+UPDATE_RATE = 10         
+
+
+DATA_SOURCE = "http://api.open-notify.org/iss-now.json"
+DATA_LOCATION = ["iss_position"]
+
+WIDTH = board.DISPLAY.width
+HEIGHT = board.DISPLAY.height
+
+
+cwd = ("/"+__file__).rsplit('/', 1)[0]
+pyportal = PyPortal(url=DATA_SOURCE,
+                    json_path=DATA_LOCATION,
+                    status_neopixel=board.NEOPIXEL,
+                    text_font=None,
+                    default_bg=cwd+"/map.bmp") # This sets the Mercator projection bitmap as the background
+
+# Connect to the internet and get local time
+pyportal.get_local_time()
+
+# Date and time label
+date_label = Label(FONT, text="0000-00-00", color=DATE_COLOR, x=165, y=223)
+time_label = Label(FONT, text="00:00:00", color=TIME_COLOR, x=240, y=223)
+pyportal.splash.append(date_label)
+pyportal.splash.append(time_label)
+
+# ISS trail
+trail_bitmap = displayio.Bitmap(3, 3, 1)
+trail_palette = displayio.Palette(1)
+trail_palette[0] = TRAIL_COLOR
+trail = displayio.Group()
+pyportal.splash.append(trail)
+
+# ISS location marker
+marker = displayio.Group()
+for r in range(MARK_SIZE - MARK_THICKNESS, MARK_SIZE):
+    marker.append(Circle(0, 0, r, outline=MARK_COLOR))
+pyportal.splash.append(marker)
+
+def get_location(width=WIDTH, height=HEIGHT):
+    """Fetch current lat/lon, convert to (x, y) tuple scaled to width/height."""
+
+    # Get location
+    try:
+        location = pyportal.fetch()
+    except RuntimeError:
+        return None, None
+
+    # Compute (x, y) coordinates
+    lat = float(location["latitude"])   # degrees, -90 to 90
+    lon = float(location["longitude"])  # degrees, -180 to 180
+
+    # Scale latitude for cropped map
+    lat *= 90 / LAT_MAX
+
+    # Mercator projection math
+    # https://stackoverflow.com/a/14457180
+    # https://en.wikipedia.org/wiki/Mercator_projection#Alternative_expressions
+    x = lon + 180
+    x = width * x / 360
+
+    y = math.radians(lat)
+    y = math.tan(math.pi / 4 + y / 2)
+    y = math.log(y)
+    y = (width * y) / (2 * math.pi)
+    y = height / 2 - y
+
+    return int(x), int(y)
+
+def update_display(current_time, update_iss=False):
+    """Update the display with current info."""
+
+    # ISS location
+    if update_iss:
+        x, y = get_location()
+        if x and y:
+            marker.x = x
+            marker.y = y
+            if len(trail) >= TRAIL_LENGTH:
+                trail.pop(0)
+            trail.append(displayio.TileGrid(trail_bitmap,
+                                            pixel_shader=trail_palette,
+                                            x = x - 1,
+                                            y = y - 1) )
+
+
+    # Date and time
+    date_label.text = "{:04}-{:02}-{:02}".format(current_time.tm_year,
+                                                 current_time.tm_mon,
+                                                 current_time.tm_mday)
+    time_label.text = "{:02}:{:02}:{:02}".format(current_time.tm_hour,
+                                                 current_time.tm_min,
+                                                 current_time.tm_sec)
+
+    try:
+        board.DISPLAY.refresh(target_frames_per_second=60)
+    except AttributeError:
+        board.DISPLAY.refresh_soon()
+
+
+# Initial refresh
+update_display(time.localtime(), True)
+last_update = time.monotonic()
+
+# Run forever
+while True:
+    now = time.monotonic()
+    new_position = False
+    if now - last_update > UPDATE_RATE:
+        new_position = True
+        last_update = now
+    update_display(time.localtime(), new_position)
+    time.sleep(0.5)
+
+
+```
 # Second Milestone
 <iframe width="560" height="315" src="https://www.youtube.com/embed/8KgjXdQiv_Y?si=oTuHQKYGt_8P7KV_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
@@ -37,6 +181,8 @@ My second milestone was connecting the Adafruit PyPortal to the Internet to find
 One challenge I faced in this milestone was that my code failed several times. When making my settings. When testing the toml file with a test variable, the code.py file failed to import and print the test variable. I attempted to troubleshoot the issue by testing each line individually to identify the faulty one. But when I typed them in that way to find out which one was faulty, they all worked. Now, one of the ways I think it didn't work before was because I messed up the quotation marks, changing what were the variable names and what were the actual values of the variables themselves. After I cleared that up, I misread the instructions to create the code that connects the PyPortal to the wifi. The instructions told me to input the code in the code.py file I've been using since the beginning of the project, but I created another file called code.py (which was also created incorrectly), and inputted the code incorrectly. This created a duplicate code.py file, which had faulty code. Whenever I tried to run my settings.toml code, I kept getting errors on code.py. The problems kept persisting until I tracked down and deleted the faulty file. After I did that, the code finally worked.
 
 The next milestone is getting the PyPortal to track the location of the ISS and display it on a map.
+
+# Code
 ```python
 #This imports the os module, allowing access to file paths, environment tables, and system-level functions.
 import os
@@ -91,14 +237,18 @@ ssl_context = adafruit_connection_manager.get_radio_ssl_context(esp)
 #This sets up the requests session for sending HTTP GET/POST requests
 requests = adafruit_requests.Session(pool, ssl_context)
 
+# This prints a status message if ESP isn't connected but is detected
 if esp.status == adafruit_esp32spi.WL_IDLE_STATUS:
     print("ESP32 found and in idle mode")
+# This prints the ESP32 firmware version and MAC address
 print("Firmware vers.", esp.firmware_version)
 print("MAC addr:", ":".join("%02X" % byte for byte in esp.MAC_address))
 
+# This searches for all available WiFi networks and displays them alongside their respective signal strengths
 for ap in esp.scan_networks():
     print("\t%-23s RSSI: %d" % (ap.ssid, ap.rssi))
 
+# This line of code attempts to connect to the specified WiFi network and automatically retries upon encountering an error
 print("Connecting to AP...")
 while not esp.is_connected:
     try:
@@ -106,12 +256,16 @@ while not esp.is_connected:
     except OSError as e:
         print("could not connect to AP, retrying: ", e)
         continue
+
+# This prints the connected SSID and its signal strength 
 print("Connected to", esp.ap_info.ssid, "\tRSSI:", esp.ap_info.rssi)
+# This prints the assigned IP address
 print("My IP address is", esp.ipv4_address)
+# This looks up the IP address for adafruit.com and pings google.com
 print("IP lookup adafruit.com: %s" % esp.pretty_ip(esp.get_host_by_name("adafruit.com")))
 print("Ping google.com: %d ms" % esp.ping("google.com"))
 
-# esp._debug = True
+# This performs an HTTP GET request to fetch plain text, prints the response, and closes the connection
 print("Fetching text from", TEXT_URL)
 r = requests.get(TEXT_URL)
 print("-" * 40)
@@ -119,6 +273,7 @@ print(r.text)
 print("-" * 40)
 r.close()
 
+# This does the same as the above code, except it fetches a JSON response, which r.json() parses and it returns a dictionary
 print()
 print("Fetching json from", JSON_URL)
 r = requests.get(JSON_URL)
@@ -127,6 +282,7 @@ print(r.json())
 print("-" * 40)
 r.close()
 
+# Printed upon completion of the code
 print("Done!")
 
 
