@@ -8,13 +8,13 @@ Have you ever thought about the International Space Station? The permanently man
 ![Headstone Image](headshot.png)
 
 # Picture of Finished ISS Tracker
-![Headstone Image](circuitpython_pp_iss_banner.jpg)
+![Headstone Image](Pyportalexamplebanner.png)
 
 
-<!--
+
 # Final Milestone 
 
-
+<!--
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/F7M7imOVGug" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
@@ -25,9 +25,9 @@ For your final milestone, explain the outcome of your project. Key details to in
 - What you hope to learn in the future after everything you've learned at BSE
 # Summary of Final Milestone Build Process
 -->
+My final milestone was to get the PyPortal to display the current location of the ISS, and the local date and time on a bitmap of the Mercator projection of the Earth. To do that, I had to download the bitmap of the Mercator projection and ensure I had all the correct files for the PyPortal to connect to the internet and retrieve the ISS's location, as well as the local date and time.
 
-My final milestone was getting the PyPortal to display a bitmap of the Mercator Projection of the Earth, connect to the internet, find the location of the ISS, Display that location on the screen, and display the local date and time. To do that, I had to Import a bitmap of the Mercator map projection, convert longitude and latitude coordinates to x and y points since longitude and latitude are made for a sphere
-# Code
+I faced several challenges during this milestone, and it was easily the hardest part of the project. My first challenge was that I didn't see that in the code below this section, it already connects to the internet using a PyPortal object. Due to this, I kept the code that used low-level ESP32SPI to connect to the internet, which caused errors because it's like having 2 drivers in the same car seat, one who has established rules and routes, and another driver who turns, brakes, and accelerates independently, leading to an accident. But that was only problem number one. The second challenge was that I kept getting an error about line 181 in init.py and an AttributeError about the 'PyPortal' object not having a root group. I didn't know what to do from here, so I asked an instructor. Since I was using TextEdit for the entirety of the project up until that point, the instructor asked me to download Mu Editor, a code editor 
 
 ```python
 # This is imported for timekeeping and finding the local time
@@ -195,13 +195,13 @@ import adafruit_connection_manager
 import adafruit_requests
 #This maps hardware pins on your board
 import board
-#This is used to initalize the SPI bus
+#This is used to initialize the SPI bus
 import busio
 #This sets pins as digital inputs and digital outputs
 from digitalio import DigitalInOut
 #This provides classes and functions for drawing graphics to the screen
 import displayio
-#This allows loading custom .bdf or .pcf bitmap fonts for display text (However this is not used in the code)
+#This allows loading custom .bdf or .pcf bitmap fonts for display text (However, this is not used in the code)
 from adafruit_bitmap_font import bitmap_font
 #This is the core library for controlling the ESP32 WiFi co-processor over SPI
 from adafruit_esp32spi import adafruit_esp32spi
@@ -217,7 +217,7 @@ print("ESP32 SPI webclient test")
 TEXT_URL = "http://wifitest.adafruit.com/testwifi/index.html"
 JSON_URL = "http://wifitest.adafruit.com/testwifi/sample.json"
 
-#Sets up the chip-select, busy and reset pins to control the ESP32 Module
+#Sets up the chip-select, busy, and reset pins to control the ESP32 Module
 esp32_cs = DigitalInOut(board.ESP_CS)
 esp32_ready = DigitalInOut(board.ESP_BUSY)
 esp32_reset = DigitalInOut(board.ESP_RESET)
@@ -227,7 +227,7 @@ if "SCK1" in dir(board):
     spi = busio.SPI(board.SCK1, board.MOSI1, board.MISO1)
 else:
     spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
-#Initalizes communication with the ESP32 over SPI using previously defined pins
+# Initializes communication with the ESP32 over SPI using previously defined pins
 esp = adafruit_esp32spi.ESP_SPIcontrol(spi, esp32_cs, esp32_ready, esp32_reset)
 
 #This sets up socketpool for internet communication
@@ -344,13 +344,13 @@ My first milestone was loading the PyPortal with all the files required to run t
 | Adafruit PyPortal | It displays the location of the ISS, displays the map, and holds all the code for the ISS tracker | $54.95 | <a href="https://www.adafruit.com/product/4116"> Link </a> |
 | Adafruit PyPortal Display Stand | A "shell" for the PyPortal, making it sturdier and easier to hold | $9.95 | <a href="https://www.adafruit.com/product/4146"> Link </a> |
 | USB-A to USB-Micro cable | Connects the PyPortal to your computer | $4.00 | <a href="https://www.amazon.com/s?k=usb+a+to+usb+micro+cable&crid=2EEH9XWXH5G8H&sprefix=usb+a+to+usb+micro+%2Caps%2C149&ref=nb_sb_ss_p13n-pd-dpltr-ranker_1_19"> Link </a> |
-
+<!--
 # Other Resources/Examples
 One of the best parts about Github is that you can view how other people set up their own work. Here are some past BSE portfolios that are awesome examples. You can view how they set up their portfolio, and you can view their index.md files to understand how they implemented different portfolio components.
 - [Example 1](https://trashytuber.github.io/YimingJiaBlueStamp/)
 - [Example 2](https://sviatil0.github.io/Sviatoslav_BSE/)
 - [Example 3](https://arneshkumar.github.io/arneshbluestamp/)
-
+-->
 # Starter Project: Retro Arcade Console
 <iframe width="500" height="281" src="https://www.youtube.com/embed/i_2Iimyn7tw?si=MvCyhHR4sTnx0RO8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
