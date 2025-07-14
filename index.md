@@ -10,6 +10,7 @@ Have you ever thought about the International Space Station? The permanently man
 # Picture of Finished ISS Tracker
 ![Headstone Image](Pyportalexamplebanner.png)
 
+# Modifications
 
 
 # Final Milestone 
@@ -27,7 +28,11 @@ For your final milestone, explain the outcome of your project. Key details to in
 -->
 My final milestone was to get the PyPortal to display the current location of the ISS, and the local date and time on a bitmap of the Mercator projection of the Earth. To do that, I had to download the bitmap of the Mercator projection and ensure I had all the correct files for the PyPortal to connect to the internet and retrieve the ISS's location, as well as the local date and time.
 
-I faced several challenges during this milestone, and it was easily the hardest part of the project. My first challenge was that I didn't see that in the code below this section, it already connects to the internet using a PyPortal object. Due to this, I kept the code that used low-level ESP32SPI to connect to the internet, which caused errors because it's like having 2 drivers in the same car seat, one who has established rules and routes, and another driver who turns, brakes, and accelerates independently, leading to an accident. But that was only problem number one. The second challenge was that I kept getting an error about line 181 in init.py and an AttributeError about the 'PyPortal' object not having a root group. I didn't know what to do from here, so I asked an instructor. Since I was using TextEdit for the entirety of the project up until that point, the instructor asked me to download Mu Editor, a code editor 
+I faced several challenges during this milestone, and it was easily the hardest part of the project. My first challenge was that I didn't see that in the code below this section, it already connects to the internet using a PyPortal object. Due to this, I kept the code that used low-level ESP32SPI to connect to the internet, which caused errors because it's like having 2 drivers in the same car seat, one who has established rules and routes, and another driver who turns, brakes, and accelerates independently, leading to an accident. But that was only problem number one. 
+
+The second challenge was that I kept getting an error about line 181 in init.py and an AttributeError about the 'PyPortal' object not having a root group. I didn't know what to do from here, so I asked an instructor. Since I was using TextEdit for the entirety of the project up until that point, the instructor asked me to download Mu Editor, a code editor for Python and its variants such as MicroPython and CircuitPython. However, I was not an administrator on my computer and could not download any applications. I called my dad because he was the administrator and tried to use his password to download Mu Editor, to no avail. Due to this setback, I had to use a slow loaner computer, but sadly, even with an instructor's help, the issue could not be solved. Once I went home, I called my father to find the password to download Mu Editor, but we couldn't find it, and ended up resetting our passwords, and he made me an administrator, so I could download Mu Editor and have a better look at the code.
+
+The third challenge was the error concerning line 181 in init.py. Nothing I was doing was working, so I went to an instructor, who looked over the issue. 
 
 ```python
 # This is imported for timekeeping and finding the local time
