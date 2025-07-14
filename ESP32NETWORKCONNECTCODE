@@ -1,0 +1,100 @@
+#This imports the os module, allowing access to file paths, environment tables, and system-level functions.
+import os
+#getnev() get environment variables. In CircuitPython, this usually refers to values in a settings.toml file, usually WiFi credentials
+from os import getenv
+
+#This helps manage networking with different backends like ESP32.
+import adafruit_connection_manager
+#This imports a simplified HTTP request library similar to Python's requests.
+import adafruit_requests
+#This maps hardware pins on your board
+import board
+#This is used to initialize the SPI bus
+import busio
+#This sets pins as digital inputs and digital outputs
+from digitalio import DigitalInOut
+#This provides classes and functions for drawing graphics to the screen
+import displayio
+#This allows loading custom .bdf or .pcf bitmap fonts for display text (However, this is not used in the code)
+from adafruit_bitmap_font import bitmap_font
+#This is the core library for controlling the ESP32 WiFi co-processor over SPI
+from adafruit_esp32spi import adafruit_esp32spi
+
+#Loads the WiFi credentials from the settings.toml file and keeps them out of the code
+ssid = getenv("CIRCUITPY_WIFI_SSID")
+password = getenv("CIRCUITPY_WIFI_PASSWORD")
+
+#This is the debug message printed when the program starts running
+print("ESP32 SPI webclient test")
+
+#These are URLs hosted by AdaFruit for basic connectivity and JSON pairing tests 
+TEXT_URL = "http://wifitest.adafruit.com/testwifi/index.html"
+JSON_URL = "http://wifitest.adafruit.com/testwifi/sample.json"
+
+#Sets up the chip-select, busy, and reset pins to control the ESP32 Module
+esp32_cs = DigitalInOut(board.ESP_CS)
+esp32_ready = DigitalInOut(board.ESP_BUSY)
+esp32_reset = DigitalInOut(board.ESP_RESET)
+
+#Some boards (like SCK1) support multiple SPI ports. The code picks the secondary one if it exists, or else it defaults to the primary
+if "SCK1" in dir(board):
+    spi = busio.SPI(board.SCK1, board.MOSI1, board.MISO1)
+else:
+    spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
+# Initializes communication with the ESP32 over SPI using previously defined pins
+esp = adafruit_esp32spi.ESP_SPIcontrol(spi, esp32_cs, esp32_ready, esp32_reset)
+
+#This sets up socketpool for internet communication
+pool = adafruit_connection_manager.get_radio_socketpool(esp)
+#This sets up ssl_context for HTTPS
+ssl_context = adafruit_connection_manager.get_radio_ssl_context(esp)
+#This sets up the requests session for sending HTTP GET/POST requests
+requests = adafruit_requests.Session(pool, ssl_context)
+
+# This prints a status message if ESP isn't connected but is detected
+if esp.status == adafruit_esp32spi.WL_IDLE_STATUS:
+    print("ESP32 found and in idle mode")
+# This prints the ESP32 firmware version and MAC address
+print("Firmware vers.", esp.firmware_version)
+print("MAC addr:", ":".join("%02X" % byte for byte in esp.MAC_address))
+
+# This searches for all available WiFi networks and displays them alongside their respective signal strengths
+for ap in esp.scan_networks():
+    print("\t%-23s RSSI: %d" % (ap.ssid, ap.rssi))
+
+# This line of code attempts to connect to the specified WiFi network and automatically retries upon encountering an error
+print("Connecting to AP...")
+while not esp.is_connected:
+    try:
+        esp.connect_AP(ssid, password)
+    except OSError as e:
+        print("could not connect to AP, retrying: ", e)
+        continue
+
+# This prints the connected SSID and its signal strength 
+print("Connected to", esp.ap_info.ssid, "\tRSSI:", esp.ap_info.rssi)
+# This prints the assigned IP address
+print("My IP address is", esp.ipv4_address)
+# This looks up the IP address for adafruit.com and pings google.com
+print("IP lookup adafruit.com: %s" % esp.pretty_ip(esp.get_host_by_name("adafruit.com")))
+print("Ping google.com: %d ms" % esp.ping("google.com"))
+
+# This performs an HTTP GET request to fetch plain text, prints the response, and closes the connection
+print("Fetching text from", TEXT_URL)
+r = requests.get(TEXT_URL)
+print("-" * 40)
+print(r.text)
+print("-" * 40)
+r.close()
+
+# This does the same as the above code, except it fetches a JSON response, which r.json() parses and it returns a dictionary
+print()
+print("Fetching json from", JSON_URL)
+r = requests.get(JSON_URL)
+print("-" * 40)
+print(r.json())
+print("-" * 40)
+r.close()
+
+# Printed upon completion of the code
+print("Done!")
