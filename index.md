@@ -15,8 +15,6 @@ Have you ever thought about the International Space Station? The permanently man
 
 # Final Milestone 
 
-
-
 <<iframe width="560" height="315" src="https://www.youtube.com/embed/-hmQWgMjSMQ?si=SLwFndMikW0-HZ1E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>>
 <!--
 For your final milestone, explain the outcome of your project. Key details to include are:
@@ -24,7 +22,6 @@ For your final milestone, explain the outcome of your project. Key details to in
 - What your biggest challenges and triumphs were at BSE
 - A summary of key topics you learned about
 - What you hope to learn in the future after everything you've learned at BSE
-# Summary of Final Milestone Build Process
 -->
 My final milestone was to get the PyPortal to display the current location of the ISS, and the local date and time on a bitmap of the Mercator projection of the Earth. To do that, I had to download the bitmap of the Mercator projection and ensure I had all the correct files for the PyPortal to connect to the internet and retrieve the ISS's location, as well as the local date and time.
 
@@ -35,35 +32,45 @@ The second challenge was that I kept getting an error about line 181 in init.py 
 The third challenge was the error concerning line 181 in init.py and an AttributeError about the 'PyPortal' object not having a root group. Nothing I was doing was working, so I went to an instructor, who looked over the issue. We couldn't find the root of the issue, so my instructor advised me to fully reset the PyPortal to get the starting set of files, since the error only happened if I had accidentally deleted a necessary file that couldn't be downloaded from the internet. I tried doing that, however, I kept getting the same set of files I had, leading to the error popping up each time I ran the code. No matter how much I researched, I still could not find a way to fully reset the PyPortal. I went to get the help of another instructor to help me. What I didn't know was that he had done this project before, and fully reset the PyPortal and got all the required files and code to work with ease. After he had troubleshooted the problem, I put in the code (see below) into Mu Editor, and it successfully displayed the current position of the ISS and the local date and time on a Mercator bitmap.
 
 ```python
-# This is imported for timekeeping and finding the local time
+# The time module allows for formatting and tracking time 
 import time
-# This is imported to calculate mathematical operations
+# The math module is used for calculations such as converting latitude and longitude into coordinates on the screen
 import math
-# This is imported to access PyPortal's hardware pins and display
+# The board module is used for providing access to hardware pins on the screen
 import board
-# This is imported to display graphics on the PyPortal display 
+# The displayio module is used for handling graphics and layouts on the screen
 import displayio
-# This is imported for the usage of built-in fonts for text labels
+# FONT is the built-in terminal font
 from terminalio import FONT
-# This is imported 
+# The PyPortal module is a high-level library used for managing internet access, display, and JSON fetching
 from adafruit_pyportal import PyPortal
+# Circle is imported to draw a circular marker
 from adafruit_display_shapes.circle import Circle
+# Label is imported to place text on the display
 from adafruit_display_text.label import Label
 
-
-MARK_SIZE = 10           
-MARK_COLOR = 0xFF3030    
-MARK_THICKNESS = 5       
-TRAIL_LENGTH = 200       
+# Radius of the ring-like ISS Marker
+MARK_SIZE = 10
+# Color of the ring-like ISS Marker (0xFF3030 is Red)          
+MARK_COLOR = 0xFF3030
+# The thickness of the ring-like ISS Marker
+MARK_THICKNESS = 5
+# How many past positions of the ISS the PyPortal must display
+TRAIL_LENGTH = 200
+# The color of the ISS's current and past positions (0xFFFF00 is yellow)
 TRAIL_COLOR = 0xFFFF00
-# Color of the    
-DATE_COLOR = 0x111111    
-TIME_COLOR = 0x111111   
-LAT_MAX = 80             
+# The color of the text that displays the date
+DATE_COLOR = 0x111111
+# The color of the text that displays the time
+TIME_COLOR = 0x111111
+# The vertical latitude range for the map
+LAT_MAX = 80
+# How many seconds it takes for the map to update
 UPDATE_RATE = 10         
 
-
+# This is the URL for the ISS location API
 DATA_SOURCE = "http://api.open-notify.org/iss-now.json"
+# This 
 DATA_LOCATION = ["iss_position"]
 
 WIDTH = board.DISPLAY.width
