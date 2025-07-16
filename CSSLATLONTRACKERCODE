@@ -1,0 +1,52 @@
+import time
+import board
+from terminalio import FONT
+from adafruit_display_text.label import Label
+from adafruit_pyportal import PyPortal
+from os import getenv
+
+api_key = getenv("CIRCUITPY_N2YO_API_KEY")
+if not api_key:
+    raise ValueError("API key not found! Check your settings.toml file.")
+
+observer_lat = 37.7749     # Example: San Francisco
+observer_lon = -122.4194
+observer_alt = 0           # Altitude in meters
+
+url = (
+    f"https://api.n2yo.com/rest/v1/satellite/positions/48274/{observer_lat}/{observer_lon}/{observer_alt}/1&apiKey={api_key}"
+)
+print("Fetching CSS Tianhe position from:", url)
+
+pyportal = PyPortal(
+    url=url,
+    json_path=["positions", 0],
+    status_neopixel=board.NEOPIXEL
+)
+
+lat_label = Label(FONT, text="Lat: ---", color=0xFFFFFF, x=10, y=40)
+lon_label = Label(FONT, text="Lon: ---", color=0xFFFFFF, x=10, y=70)
+board.DISPLAY.auto_refresh = True
+pyportal.splash.append(lat_label)
+pyportal.splash.append(lon_label)
+
+def update_position():
+    try:
+        print("Fetching data...")
+        data = pyportal.fetch()
+        print("Raw response:", data)
+
+        lat = float(data["satlatitude"])
+        lon = float(data["satlongitude"])
+        lat_label.text = f"Lat: {lat:.2f}"
+        lon_label.text = f"Lon: {lon:.2f}"
+        print(f"CSS Tianhe → Latitude: {lat}, Longitude: {lon}")
+
+    except Exception as e:
+        print("Error fetching location:", e)
+        lat_label.text = "Lat: ERR"
+        lon_label.text = "Lon: ERR"
+
+while True:
+    update_position()
+    time.sleep(10)
