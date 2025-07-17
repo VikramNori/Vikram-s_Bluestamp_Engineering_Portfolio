@@ -71,7 +71,7 @@ DATE_COLOR = 0x111111
 TIME_COLOR = 0x111111
 # The vertical latitude range for the map
 LAT_MAX = 80
-# How many seconds it takes for the map to update
+# How many seconds each map update takes
 UPDATE_RATE = 10         
 
 # This is the URL for the ISS location API
