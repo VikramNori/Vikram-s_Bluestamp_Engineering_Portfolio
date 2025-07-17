@@ -76,21 +76,22 @@ UPDATE_RATE = 10
 
 # This is the URL for the ISS location API
 DATA_SOURCE = "http://api.open-notify.org/iss-now.json"
-# This 
+# This tells the Pyportal to extract the nested dictionary "iss_position"
 DATA_LOCATION = ["iss_position"]
 
+# This gets the dimensions of the PyPortal screen
 WIDTH = board.DISPLAY.width
 HEIGHT = board.DISPLAY.height
 
 
 cwd = ("/"+__file__).rsplit('/', 1)[0]
-pyportal = PyPortal(url=DATA_SOURCE,
+pyportal = PyPortal(url=DATA_SOURCE, # This sets up the url to 
                     json_path=DATA_LOCATION,
-                    status_neopixel=board.NEOPIXEL,
+                    status_neopixel=board.NEOPIXEL, # This makes sure the Neopixel is red when it can't connect to the internet, is yellow when currently connecting, and green upon a successful connection
                     text_font=None,
                     default_bg=cwd+"/map.bmp") # This sets the Mercator projection bitmap as the background
 
-# Connect to the internet and get local time
+# This connects to the internet and gets the local time
 pyportal.get_local_time()
 
 # Date and time label
