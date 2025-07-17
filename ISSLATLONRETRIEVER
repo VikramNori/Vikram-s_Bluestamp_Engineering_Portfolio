@@ -1,0 +1,45 @@
+import time
+import board
+from terminalio import FONT
+from adafruit_display_text.label import Label
+from adafruit_pyportal import PyPortal
+
+
+url = ("http://api.open-notify.org/iss-now.json")
+print("Fetching ISS position from:", url)
+
+pyportal = PyPortal(
+    url=url,
+    json_path=["iss_position"],
+    status_neopixel=board.NEOPIXEL
+)
+
+lat_label = Label(FONT, text="Lat: ---", color=0xFFFFFF, x=10, y=40)
+lon_label = Label(FONT, text="Lon: ---", color=0xFFFFFF, x=10, y=70)
+board.DISPLAY.auto_refresh = True
+pyportal.splash.append(lat_label)
+pyportal.splash.append(lon_label)
+
+def update_position():
+    try:
+        print("Fetching data...")
+        data = pyportal.fetch()
+        print("Raw response:", data)
+        
+        if not data:
+            raise ValueError("No data returned from API")
+
+        lat = float(data["latitude"])
+        lon = float(data["longitude"])
+        lat_label.text = f"Lat: {lat:.2f}"
+        lon_label.text = f"Lon: {lon:.2f}"
+        print(f"ISS → Latitude: {lat}, Longitude: {lon}")
+
+    except Exception as e:
+        print("Error fetching location:", e)
+        lat_label.text = "Lat: ERR"
+        lon_label.text = "Lon: ERR"
+
+while True:
+    update_position()
+    time.sleep(10)
