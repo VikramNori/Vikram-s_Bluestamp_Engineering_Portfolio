@@ -83,7 +83,7 @@ DATA_LOCATION = ["iss_position"]
 WIDTH = board.DISPLAY.width
 HEIGHT = board.DISPLAY.height
 
-
+# This gets the current file dictionary
 cwd = ("/"+__file__).rsplit('/', 1)[0]
 pyportal = PyPortal(url=DATA_SOURCE, # This sets up the url to 
                     json_path=DATA_LOCATION,
@@ -94,44 +94,39 @@ pyportal = PyPortal(url=DATA_SOURCE, # This sets up the url to
 # This connects to the internet and gets the local time
 pyportal.get_local_time()
 
-# Date and time label
+# This is the date and time label
 date_label = Label(FONT, text="0000-00-00", color=DATE_COLOR, x=165, y=223)
 time_label = Label(FONT, text="00:00:00", color=TIME_COLOR, x=240, y=223)
 pyportal.splash.append(date_label)
 pyportal.splash.append(time_label)
 
-# ISS trail
-trail_bitmap = displayio.Bitmap(3, 3, 1)
-trail_palette = displayio.Palette(1)
-trail_palette[0] = TRAIL_COLOR
-trail = displayio.Group()
-pyportal.splash.append(trail)
+trail_bitmap = displayio.Bitmap(3, 3, 1) # This sets up the 3x3 dot for the trail
+trail_palette = displayio.Palette(1) # This sets one color in the palette
+trail_palette[0] = TRAIL_COLOR @ # This sets the trail color
+trail = displayio.Group() # This is the group that holds trail dots
+pyportal.splash.append(trail) 
 
-# ISS location marker
-marker = displayio.Group()
+marker = displayio.Group() # This is the group to hold the ISS marker
 for r in range(MARK_SIZE - MARK_THICKNESS, MARK_SIZE):
-    marker.append(Circle(0, 0, r, outline=MARK_COLOR))
+    marker.append(Circle(0, 0, r, outline=MARK_COLOR)) # This draws concentric circles
 pyportal.splash.append(marker)
 
 def get_location(width=WIDTH, height=HEIGHT):
     """Fetch current lat/lon, convert to (x, y) tuple scaled to width/height."""
 
-    # Get location
+    # This gets  the location
     try:
-        location = pyportal.fetch()
+        location = pyportal.fetch() # This makes an HTTP request
     except RuntimeError:
         return None, None
 
-    # Compute (x, y) coordinates
+    # This computes (x, y) coordinates
     lat = float(location["latitude"])   # degrees, -90 to 90
     lon = float(location["longitude"])  # degrees, -180 to 180
 
-    # Scale latitude for cropped map
-    lat *= 90 / LAT_MAX
+    lat *= 90 / LAT_MAX # This is the crop for the bitmap
 
-    # Mercator projection math
-    # https://stackoverflow.com/a/14457180
-    # https://en.wikipedia.org/wiki/Mercator_projection#Alternative_expressions
+# This converts latitude and longitude to x and y points on a bitmap
     x = lon + 180
     x = width * x / 360
 
@@ -167,7 +162,7 @@ def update_display(current_time, update_iss=False):
     time_label.text = "{:02}:{:02}:{:02}".format(current_time.tm_hour,
                                                  current_time.tm_min,
                                                  current_time.tm_sec)
-
+# This updates the screen 60 times a second
     try:
         board.DISPLAY.refresh(target_frames_per_second=60)
     except AttributeError:
