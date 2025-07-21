@@ -12,9 +12,9 @@ Have you ever thought about the International Space Station? The permanently man
 
 # Modification 1
 
-I had two modifications in mind for this project: the first was to track the CSS Tianhe on the same bitmap as the ISS, and the second was to utilize the unused touchscreen module in the code, either by displaying the ISS and CSS on separate screens. This section is about the first modification.
+My modification for this project was to enable it to track the CSS Tianhe alongside the ISS on the same screen, and display both space stations' coordinates on the BitMap in real-time.
 
-For the first modification, I didn't have my eyes set on the CSS Tianhe at first; I was trying to find another satellite to track by finding APIs like the Open Notify API that was used to track the ISS. However, that specific website was made specifically for the ISS Tracker project, so I knew I couldn't find another website like that. After some searching, I found a N2YO API that tracks the CSS Tianhe
+For the first modification, I didn't initially have my eyes set on the CSS Tianhe; I was trying to find another satellite to track by searching for APIs, such as the Open Notify API, which is used to track the ISS. However, that specific website was made specifically for the ISS Tracker project, so I knew I couldn't find another website like that. After some searching, I found an N2YO API that tracks the CSS Tianhe. However, there are differences between Open Notify and N2YO. For example, Open Notify only tracks the ISS, but N2YO can track multiple satellites. Open Notify doesn't require authentication, unlike N2YO, etc.
 
 
 # Final Milestone 
@@ -31,11 +31,11 @@ For your final milestone, explain the outcome of your project. Key details to in
 
 My final milestone was to get the PyPortal to display the current location of the ISS, and the local date and time on a bitmap of the Mercator projection of the Earth. To do that, I had to download the bitmap of the Mercator projection and ensure I had all the correct files for the PyPortal to connect to the internet and retrieve the ISS's location, as well as the local date and time.
 
-I faced several challenges during this milestone, and it was easily the hardest part of the project. My first challenge was that I didn't see that in the code below this section, it already connects to the internet using a PyPortal object. Due to this, I kept the code that used low-level ESP32SPI to connect to the internet, which caused errors because it's like having 2 drivers in the same car seat, one who has established rules and routes, and another driver who turns, brakes, and accelerates independently, leading to an accident. But that was only problem number one. 
+I faced several challenges during this milestone, and it was easily the hardest part of the project. My first challenge was that I didn't see that in the code below this section; it already connects to the internet using a PyPortal object. Due to this, I kept the code that used low-level ESP32SPI to connect to the internet, which caused errors because it's like having 2 drivers in the same car seat, one who has established rules and routes, and another driver who turns, brakes, and accelerates independently, leading to an accident. But that was only problem number one. 
 
 The second challenge was that I kept getting an error about line 181 in init.py and an AttributeError about the 'PyPortal' object not having a root group. I didn't know what to do from here, so I asked an instructor. Since I was using TextEdit for the entirety of the project up until that point, the instructor asked me to download Mu Editor, a code editor for Python and its variants such as MicroPython and CircuitPython. However, I was not an administrator on my computer and could not download any applications. I called my dad because he was the administrator and tried to use his password to download Mu Editor, to no avail. Due to this setback, I had to use a slow loaner computer; however, even with an instructor's help, the issue could not be resolved. Once I got home, I called my father to find the password to download Mu Editor, but we couldn't find it, and ended up resetting our passwords, and he made me an administrator, so I could download Mu Editor and have a better look at the code.
 
-The third challenge was the error concerning line 181 in init.py and an AttributeError about the 'PyPortal' object not having a root group. Nothing I was doing was working, so I went to an instructor, who looked over the issue. We couldn't find the root of the issue, so my instructor advised me to fully reset the PyPortal to get the starting set of files, since the error only happened if I had accidentally deleted a necessary file that couldn't be downloaded from the internet. I tried doing that, however, I kept getting the same set of files I had, leading to the error popping up each time I ran the code. No matter how much I researched, I still could not find a way to fully reset the PyPortal. I went to get the help of another instructor to help me. What I didn't know was that he had done this project before, and fully reset the PyPortal and got all the required files and code to work with ease. After he had troubleshooted the problem, I put in the code (see below) into Mu Editor, and it successfully displayed the current position of the ISS and the local date and time on a Mercator bitmap.
+The third challenge was the error concerning line 181 in init.py and an AttributeError about the 'PyPortal' object not having a root group. Nothing I was doing was working, so I went to an instructor, who looked over the issue. We couldn't find the root of the issue, so my instructor advised me to fully reset the PyPortal to get the starting set of files, since the error only happened if I had accidentally deleted a necessary file that couldn't be downloaded from the internet. I tried doing that; however, I kept getting the same set of files I had, leading to the error popping up each time I ran the code. No matter how much I researched, I still could not find a way to fully reset the PyPortal. I went to get the help of another instructor to help me. What I didn't know was that he had done this project before, and fully reset the PyPortal and got all the required files and code to work with ease. After he had troubleshooted the problem, I put in the code (see below) into Mu Editor, and it successfully displayed the current position of the ISS and the local date and time on a Mercator bitmap.
 
 ```python
 # The time module allows for formatting and tracking time 
@@ -333,7 +333,7 @@ My first milestone was loading the PyPortal with all the files required to run t
 ![Headstone Image](pyportalscrewless.png)
 
 
-(Above) This is the PyPortal and all the component of its shell layered together, ready to be screwed in
+(Above) This is the PyPortal and all the components of its shell layered together, ready to be screwed in
 
 ![Headstone Image](pyportalscrewed.png)
 
@@ -358,18 +358,12 @@ My first milestone was loading the PyPortal with all the files required to run t
 | Adafruit PyPortal | It displays the location of the ISS, displays the map, and holds all the code for the ISS tracker | $54.95 | <a href="https://www.adafruit.com/product/4116"> Link </a> |
 | Adafruit PyPortal Display Stand | A "shell" for the PyPortal, making it sturdier and easier to hold | $9.95 | <a href="https://www.adafruit.com/product/4146"> Link </a> |
 | USB-A to USB-Micro cable | Connects the PyPortal to your computer | $4.00 | <a href="https://www.amazon.com/s?k=usb+a+to+usb+micro+cable&crid=2EEH9XWXH5G8H&sprefix=usb+a+to+usb+micro+%2Caps%2C149&ref=nb_sb_ss_p13n-pd-dpltr-ranker_1_19"> Link </a> |
-<!--
-# Other Resources/Examples
-One of the best parts about Github is that you can view how other people set up their own work. Here are some past BSE portfolios that are awesome examples. You can view how they set up their portfolio, and you can view their index.md files to understand how they implemented different portfolio components.
-- [Example 1](https://trashytuber.github.io/YimingJiaBlueStamp/)
-- [Example 2](https://sviatil0.github.io/Sviatoslav_BSE/)
-- [Example 3](https://arneshkumar.github.io/arneshbluestamp/)
--->
+
 # Starter Project: Retro Arcade Console
 <iframe width="500" height="281" src="https://www.youtube.com/embed/i_2Iimyn7tw?si=MvCyhHR4sTnx0RO8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 # Summary of Build 
-Since it was a starter project, the build process was easy. There were instructions that I had to follow and I followed them with relative ease. The only difficulty I had was that I soldered one of the diplay panels incorrectly and it wasn't straight. the way it was oriented made it awkward to press the top button. Other than that, there weren't any difficulties.
+Since it was a starter project, the build process was easy. There were instructions that I had to follow, and I followed them with relative ease. The only difficulty I had was that I soldered one of the diplay panels incorrectly and it wasn't straight. The way it was oriented made it awkward to press the top button. Other than that, there weren't any difficulties.
 # Picture of Retro Arcade Console
 ![Headstone Image](Untitled.png)
 
