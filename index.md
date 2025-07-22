@@ -7,14 +7,15 @@ Have you ever thought about the International Space Station? The permanently man
 
 ![Headstone Image](headshot.png)
 
-# Picture of Finished ISS Tracker
-![Headstone Image](Pyportalexamplebanner.png)
+
 
 # Modification 1
 
-My modification for this project was to enable it to track the CSS Tianhe alongside the ISS on the same screen, and display both space stations' coordinates on the BitMap in real-time.
+My modification for this project was to enable it to track the CSS Tianhe and the ISS in the same code and display both space stations' coordinates on the BitMap in real-time.
 
-For the first modification, I didn't initially have my eyes set on the CSS Tianhe; I was trying to find another satellite to track by searching for APIs, such as the Open Notify API, which is used to track the ISS. However, that specific website was made specifically for the ISS Tracker project, so I knew I couldn't find another website like that. After some searching, I found an N2YO API that tracks the CSS Tianhe. However, there are differences between Open Notify and N2YO. For example, Open Notify only tracks the ISS, but N2YO can track multiple satellites. Open Notify doesn't require authentication, unlike N2YO, etc.
+For the first modification, I didn't initially have my eyes set on the CSS Tianhe; I was trying to find another satellite to track by searching for APIs, such as the Open Notify API, which is used to track the ISS. However, that specific website was made specifically for the ISS Tracker project, so I knew I couldn't find another website like that. After some searching, I found an N2YO API that tracks the CSS Tianhe. However, there are differences between Open Notify and N2YO. For example, Open Notify only tracks the ISS, but N2YO can track multiple satellites. Open Notify doesn't require authentication, unlike N2YO, and there are more differences. These differences, of course, require some slight differences in code.
+
+
 
 
 # Final Milestone 
@@ -183,8 +184,10 @@ while True:
     update_display(time.localtime(), new_position)
     time.sleep(0.5)
 
-
 ```
+# Picture of Finished ISS Tracker
+![Headstone Image](Pyportalexamplebanner.png)
+
 # Second Milestone
 <iframe width="560" height="315" src="https://www.youtube.com/embed/8KgjXdQiv_Y?si=oTuHQKYGt_8P7KV_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
