@@ -7,21 +7,6 @@ Have you ever thought about the International Space Station? The permanently man
 
 ![Headstone Image](headshot.png)
 
-
-
-# Modification 1
-
-My modification for this project was to enable it to track the CSS Tianhe and the ISS in the same code and display both space stations' coordinates on the BitMap in real-time.
-
-For the first modification, I didn't initially have my eyes set on the CSS Tianhe; I was trying to find another satellite to track by searching for APIs, such as the Open Notify API, which is used to track the ISS. However, that specific website was made specifically for the ISS Tracker project, so I knew I couldn't find another website like that. After some searching, I found an N2YO API that tracks the CSS Tianhe. However, there are differences between Open Notify and N2YO. For example, Open Notify only tracks the ISS, but N2YO can track multiple satellites. Open Notify doesn't require authentication, unlike N2YO, and there are more differences. These differences, of course, require some slight differences in code.
-
-
-
-
-# Final Milestone 
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/-hmQWgMjSMQ?si=hVzTMzLYlIjx8nQR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
 <!--
 For your final milestone, explain the outcome of your project. Key details to include are:
 - What you've accomplished since your previous milestone
@@ -29,6 +14,77 @@ For your final milestone, explain the outcome of your project. Key details to in
 - A summary of key topics you learned about
 - What you hope to learn in the future after everything you've learned at BSE
 -->
+
+# Modification
+
+My modification for this project was to enable it to track both the CSS Tianhe and the ISS simultaneously in the same code and display the latitude and longitude of both space stations on the BitMap in real-time.
+
+# Step by Step Process
+
+The first step, finding the Satellite and API, was the simplest part of the project. I spent some time searching for a satellite with an API, or an Application Programming Interface, that can easily be coded to track its location in real time. After a little bit of research, I found an N2YO API that tracks the CSS Tianhe. However, there are some differences between Open Notify, which I used for the ISS, and N2YO, which I used to track the CSS. There are some differences between N2YO and Open Notify, which warrant some differences in code, such as authentication and your location in longitude and latitude being required to use the API. 
+
+The second step, making code to track the latitude and longitude for the ISS, was also quite simple. I took some code from the original ISS tracker code
+
+# Code to track the latitude and longitude of the ISS
+```
+import time
+import board
+from terminalio import FONT
+from adafruit_display_text.label import Label
+from adafruit_pyportal import PyPortal
+
+
+url = ("http://api.open-notify.org/iss-now.json")
+print("Fetching ISS position from:", url)
+
+pyportal = PyPortal(
+    url=url,
+    json_path=["iss_position"],
+    status_neopixel=board.NEOPIXEL
+)
+
+lat_label = Label(FONT, text="Lat: ---", color=0xFFFFFF, x=10, y=40)
+lon_label = Label(FONT, text="Lon: ---", color=0xFFFFFF, x=10, y=70)
+board.DISPLAY.auto_refresh = True
+pyportal.splash.append(lat_label)
+pyportal.splash.append(lon_label)
+
+def update_position():
+    try:
+        print("Fetching data...")
+        data = pyportal.fetch()
+        print("Raw response:", data)
+        
+        if not data:
+            raise ValueError("No data returned from API")
+
+        lat = float(data["latitude"])
+        lon = float(data["longitude"])
+        lat_label.text = f"Lat: {lat:.2f}"
+        lon_label.text = f"Lon: {lon:.2f}"
+        print(f"ISS → Latitude: {lat}, Longitude: {lon}")
+
+    except Exception as e:
+        print("Error fetching location:", e)
+        lat_label.text = "Lat: ERR"
+        lon_label.text = "Lon: ERR"
+
+while True:
+    update_position()
+    time.sleep(10)
+```
+making code to track the ISS's latlon
+putting that into the ISS tracker code
+Making CSS latlon tracker
+making a full CSS tracker code with latlon based on the ISS tracker
+making the ISS or CSS tracker
+
+
+# Final Milestone 
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-hmQWgMjSMQ?si=hVzTMzLYlIjx8nQR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+
 
 My final milestone was to get the PyPortal to display the current location of the ISS, and the local date and time on a bitmap of the Mercator projection of the Earth. To do that, I had to download the bitmap of the Mercator projection and ensure I had all the correct files for the PyPortal to connect to the internet and retrieve the ISS's location, as well as the local date and time.
 
@@ -38,6 +94,7 @@ The second challenge was that I kept getting an error about line 181 in init.py 
 
 The third challenge was the error concerning line 181 in init.py and an AttributeError about the 'PyPortal' object not having a root group. Nothing I was doing was working, so I went to an instructor, who looked over the issue. We couldn't find the root of the issue, so my instructor advised me to fully reset the PyPortal to get the starting set of files, since the error only happened if I had accidentally deleted a necessary file that couldn't be downloaded from the internet. I tried doing that; however, I kept getting the same set of files I had, leading to the error popping up each time I ran the code. No matter how much I researched, I still could not find a way to fully reset the PyPortal. I went to get the help of another instructor to help me. What I didn't know was that he had done this project before, and fully reset the PyPortal and got all the required files and code to work with ease. After he had troubleshooted the problem, I put in the code (see below) into Mu Editor, and it successfully displayed the current position of the ISS and the local date and time on a Mercator bitmap.
 
+# Code
 ```python
 # The time module allows for formatting and tracking time 
 import time
@@ -140,15 +197,15 @@ def get_location(width=WIDTH, height=HEIGHT):
     return int(x), int(y)
 
 def update_display(current_time, update_iss=False):
-    """Update the display with current info."""
+    # This updates the display with current info
 
-    # ISS location
+    # This puts the x and y of the ISS on the bitmap
     if update_iss:
         x, y = get_location()
         if x and y:
             marker.x = x
             marker.y = y
-            if len(trail) >= TRAIL_LENGTH:
+            if len(trail) >= TRAIL_LENGTH: # This makes sure the trail doesn't get longer than the specified variable
                 trail.pop(0)
             trail.append(displayio.TileGrid(trail_bitmap,
                                             pixel_shader=trail_palette,
@@ -156,7 +213,7 @@ def update_display(current_time, update_iss=False):
                                             y = y - 1) )
 
 
-    # Date and time
+    # This is the code for displaying the date and time
     date_label.text = "{:04}-{:02}-{:02}".format(current_time.tm_year,
                                                  current_time.tm_mon,
                                                  current_time.tm_mday)
@@ -170,11 +227,11 @@ def update_display(current_time, update_iss=False):
         board.DISPLAY.refresh_soon()
 
 
-# Initial refresh
+# This is the initial refresh
 update_display(time.localtime(), True)
 last_update = time.monotonic()
 
-# Run forever
+# This runs forever
 while True:
     now = time.monotonic()
     new_position = False
@@ -195,6 +252,7 @@ while True:
 # Summary of Second Milestone Build Process
 My second milestone was connecting the Adafruit PyPortal to the Internet to find and track the ISS's location. To do that, I had to create a settings.toml file. One would create a settings.toml file to make sure one can share their code without sharing their sensitive network information. The settings.toml file contains the name of the network and its password, while the code.py file imports the variables by importing the os library with "import os" and uses them to connect to the internet. A surprising aspect of this project so far has been that my first two milestones have primarily been preparations for the third milestone, where I anticipate the bulk of the work will be.
 
+# Challenges
 One challenge I faced in this milestone was that my code failed several times. When making my settings. When testing the toml file with a test variable, the code.py file failed to import and print the test variable. I attempted to troubleshoot the issue by testing each line individually to identify the faulty one. But when I typed them in that way to find out which one was faulty, they all worked. Now, one of the ways I think it didn't work before was because I messed up the quotation marks, changing what were the variable names and what were the actual values of the variables themselves. After I cleared that up, I misread the instructions to create the code that connects the PyPortal to the wifi. The instructions told me to input the code in the code.py file I've been using since the beginning of the project, but I created another file called code.py (which was also created incorrectly), and inputted the code incorrectly. This created a duplicate code.py file, which had faulty code. Whenever I tried to run my settings.toml code, I kept getting errors on code.py. The problems kept persisting until I tracked down and deleted the faulty file. After I did that, the code finally worked.
 
 The next milestone is getting the PyPortal to track the location of the ISS and display it on a map.
@@ -392,5 +450,3 @@ Since it was a starter project, the build process was easy. There were instructi
 | 16 | Single-Head 5+6mm Hexagonal Column | 4
 | 17 | AAA Battery Case | 1
 | 18 | Acrylic Shell | 6
-
-
