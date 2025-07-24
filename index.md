@@ -20,32 +20,40 @@ For your final milestone, explain the outcome of your project. Key details to in
 My modification for this project was to enable it to track both the CSS Tianhe and the ISS simultaneously in the same code and display the latitude and longitude of both space stations on the BitMap in real-time.
 
 # Step by Step Process
-
 The first step, finding the Satellite and API, was the simplest part of the project. I spent some time searching for a satellite with an API, or an Application Programming Interface, that can easily be coded to track its location in real time. After a little bit of research, I found an N2YO API that tracks the CSS Tianhe. However, there are some differences between Open Notify, which I used for the ISS, and N2YO, which I used to track the CSS. There are some differences between N2YO and Open Notify, which warrant some differences in code, such as authentication and your location in longitude and latitude being required to use the API. 
 
-The second step, making code to track the latitude and longitude for the ISS, was also quite simple. I took some code from the original ISS tracker code
+The second step, making code to track the latitude and longitude for the ISS, was also quite simple. I took some code from the original ISS tracker code since it already stores the current latitude and longitude of the ISS. All I needed to do was to make sure that it prints the latitude and longitude values that it's already storing.
 
 # Code to track the latitude and longitude of the ISS
 ```
+# Time lets the PyPortal connect to the internet and get the local time.
 import time
+# Board is used to provide access to the hardware pins on the screen
 import board
+# FONT allows you to use custom fonts
 from terminalio import FONT
+# Label lets text be on the PyPortal display
 from adafruit_display_text.label import Label
+# PyPortal is imported to allow the usage of PyPortal objects
 from adafruit_pyportal import PyPortal
 
-
+# This is the API that the code is getting the latitude and longitude from
 url = ("http://api.open-notify.org/iss-now.json")
-print("Fetching ISS position from:", url)
+print("Fetching ISS position from:", URL)
 
+# This is the PyPortal object, setting the API url as the designated URL and the iss_position dictionary as the designated json path
 pyportal = PyPortal(
     url=url,
     json_path=["iss_position"],
     status_neopixel=board.NEOPIXEL
 )
 
+# This code displays the latitude and longitude labels at (10, 40) and (10,70) on the PyPortal screen
 lat_label = Label(FONT, text="Lat: ---", color=0xFFFFFF, x=10, y=40)
 lon_label = Label(FONT, text="Lon: ---", color=0xFFFFFF, x=10, y=70)
+# This makes sure the PyPortal screen automatically refreshed
 board.DISPLAY.auto_refresh = True
+# This makes sure the latitude and longitude labels update every so often
 pyportal.splash.append(lat_label)
 pyportal.splash.append(lon_label)
 
@@ -73,7 +81,7 @@ while True:
     update_position()
     time.sleep(10)
 ```
-making code to track the ISS's latlon
+
 putting that into the ISS tracker code
 Making CSS latlon tracker
 making a full CSS tracker code with latlon based on the ISS tracker
@@ -81,13 +89,12 @@ making the ISS or CSS tracker
 
 
 # Final Milestone 
-
 <iframe width="560" height="315" src="https://www.youtube.com/embed/-hmQWgMjSMQ?si=hVzTMzLYlIjx8nQR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-
-
+# Build Process
 My final milestone was to get the PyPortal to display the current location of the ISS, and the local date and time on a bitmap of the Mercator projection of the Earth. To do that, I had to download the bitmap of the Mercator projection and ensure I had all the correct files for the PyPortal to connect to the internet and retrieve the ISS's location, as well as the local date and time.
 
+# Challenges
 I faced several challenges during this milestone, and it was easily the hardest part of the project. My first challenge was that I didn't see that in the code below this section; it already connects to the internet using a PyPortal object. Due to this, I kept the code that used low-level ESP32SPI to connect to the internet, which caused errors because it's like having 2 drivers in the same car seat, one who has established rules and routes, and another driver who turns, brakes, and accelerates independently, leading to an accident. But that was only problem number one. 
 
 The second challenge was that I kept getting an error about line 181 in init.py and an AttributeError about the 'PyPortal' object not having a root group. I didn't know what to do from here, so I asked an instructor. Since I was using TextEdit for the entirety of the project up until that point, the instructor asked me to download Mu Editor, a code editor for Python and its variants such as MicroPython and CircuitPython. However, I was not an administrator on my computer and could not download any applications. I called my dad because he was the administrator and tried to use his password to download Mu Editor, to no avail. Due to this setback, I had to use a slow loaner computer; however, even with an instructor's help, the issue could not be resolved. Once I got home, I called my father to find the password to download Mu Editor, but we couldn't find it, and ended up resetting our passwords, and he made me an administrator, so I could download Mu Editor and have a better look at the code.
