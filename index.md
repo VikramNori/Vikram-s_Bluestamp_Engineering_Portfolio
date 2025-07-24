@@ -22,10 +22,10 @@ My modification for this project was to enable it to track both the CSS Tianhe a
 # Step by Step Process
 The first step, finding the Satellite and API, was the simplest part of the project. I spent some time searching for a satellite with an API, or an Application Programming Interface, that can easily be coded to track its location in real time. After a little bit of research, I found an N2YO API that tracks the CSS Tianhe. However, there are some differences between Open Notify, which I used for the ISS, and N2YO, which I used to track the CSS. There are some differences between N2YO and Open Notify, which warrant some differences in code, such as authentication and your location in longitude and latitude being required to use the API. 
 
-The second step, making code to track the latitude and longitude for the ISS, was also quite simple. I took some code from the original ISS tracker code since it already stores the current latitude and longitude of the ISS. All I needed to do was to make sure that it prints the latitude and longitude values that it's already storing.
+The second step, making code to track the latitude and longitude for the ISS, was also quite simple. I took some code from the original ISS tracker code since it already stores the current latitude and longitude of the ISS. All I needed to do was ensure that it prints the latitude and longitude values that it's already storing.
 
 # Code to track the latitude and longitude of the ISS
-```
+```python
 # Time lets the PyPortal connect to the internet and get the local time.
 import time
 # Board is used to provide access to the hardware pins on the screen
@@ -51,9 +51,78 @@ pyportal = PyPortal(
 # This code displays the latitude and longitude labels at (10, 40) and (10,70) on the PyPortal screen
 lat_label = Label(FONT, text="Lat: ---", color=0xFFFFFF, x=10, y=40)
 lon_label = Label(FONT, text="Lon: ---", color=0xFFFFFF, x=10, y=70)
-# This makes sure the PyPortal screen automatically refreshed
+# This makes sure the PyPortal screen automatically refresh
 board.DISPLAY.auto_refresh = True
 # This makes sure the latitude and longitude labels update every so often
+pyportal.splash.append(lat_label)
+pyportal.splash.append(lon_label)
+
+# This code fetches the data from the URL and JSON path listed above
+def update_position():
+    try:
+        print("Fetching data...")
+        data = pyportal.fetch()
+        print("Raw response:", data)
+
+# This code tells you if the data isn't fetched from those locations
+        if not data:
+            raise ValueError("No data returned from API")
+
+# This code makes sure that the data taken from the website is printed on the screen with the correct formatting
+        lat = float(data["latitude"])
+        lon = float(data["longitude"])
+        lat_label.text = f"Lat: {lat:.2f}"
+        lon_label.text = f"Lon: {lon:.2f}"
+        print(f"ISS → Latitude: {lat}, Longitude: {lon}")
+
+# This code makes sure if there is an error, it says so
+    except Exception as e:
+        print("Error fetching location:", e)
+        lat_label.text = "Lat: ERR"
+        lon_label.text = "Lon: ERR"
+
+# The text is updated every 10 seconds 
+while True:
+    update_position()
+    time.sleep(10)
+```
+The next step for me was to make the same code for the CSS Tianhe. It was pretty easy since I based the code on the ISS Latitude and Longitude tracker code. I only had to import the settings.toml file, change some variable names, and add my location in latitude and longitude.
+
+```python
+# Only the changes will be commented on
+import time
+import board
+from terminalio import FONT
+from adafruit_display_text.label import Label
+from adafruit_pyportal import PyPortal
+# The settings.toml file had to be imported because you need a unique key to use the API
+from os import getenv
+
+# The key is being retrieved
+api_key = getenv("CIRCUITPY_N2YO_API_KEY")
+if not api_key:
+    raise ValueError("API key not found! Check your settings.toml file.")
+
+# The latitude and longitude of the user are needed for the API to work
+observer_lat = 37.7749     # Example: San Francisco
+observer_lon = -122.4194
+observer_alt = 0           # Altitude in meters
+
+# The latitude, longitude, and unique key are needed for the URL to display the API
+url = (
+    f"https://api.n2yo.com/rest/v1/satellite/positions/48274/{observer_lat}/{observer_lon}/{observer_alt}/1&apiKey={api_key}"
+)
+print("Fetching CSS Tianhe position from:", url)
+
+pyportal = PyPortal(
+    url=url,
+    json_path=["positions", 0], # Different dictionary because of a different API
+    status_neopixel=board.NEOPIXEL
+)
+
+lat_label = Label(FONT, text="Lat: ---", color=0xFFFFFF, x=10, y=40)
+lon_label = Label(FONT, text="Lon: ---", color=0xFFFFFF, x=10, y=70)
+board.DISPLAY.auto_refresh = True
 pyportal.splash.append(lat_label)
 pyportal.splash.append(lon_label)
 
@@ -62,15 +131,12 @@ def update_position():
         print("Fetching data...")
         data = pyportal.fetch()
         print("Raw response:", data)
-        
-        if not data:
-            raise ValueError("No data returned from API")
 
-        lat = float(data["latitude"])
-        lon = float(data["longitude"])
+        lat = float(data["satlatitude"]) # Different API, Different key
+        lon = float(data["satlongitude"]) # Different API, Different key
         lat_label.text = f"Lat: {lat:.2f}"
         lon_label.text = f"Lon: {lon:.2f}"
-        print(f"ISS → Latitude: {lat}, Longitude: {lon}")
+        print(f"CSS Tianhe → Latitude: {lat}, Longitude: {lon}")
 
     except Exception as e:
         print("Error fetching location:", e)
@@ -80,10 +146,10 @@ def update_position():
 while True:
     update_position()
     time.sleep(10)
+
 ```
 
 putting that into the ISS tracker code
-Making CSS latlon tracker
 making a full CSS tracker code with latlon based on the ISS tracker
 making the ISS or CSS tracker
 
