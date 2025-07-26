@@ -7,6 +7,10 @@ Have you ever thought about the International Space Station? The permanently man
 
 ![Headstone Image](headshot.png)
 
+
+# Ending Comments
+
+
 <!--
 For your final milestone, explain the outcome of your project. Key details to include are:
 - What you've accomplished since your previous milestone
@@ -147,7 +151,7 @@ while True:
     time.sleep(10)
 
 ```
-The next step was to put the ISS latitude and longitude code into the ISS tracker code. It was deceptively easy, as I thought all I had to do was simply add in the one line to make sure it printed the latitude and longitude, but I tried for a solid 30 minutes, to no avail. I decided to ask an instructor for help. We worked together and he saw that simply adding the line that prints the latitude and longitude of the ISS wasn't enough. We both looked at the code and added the display labels of latitude and longitude, made sure get_location() returned 4 variables instead of 2 (x, y, lat, lon) instead of just x and y, and added code to update the latitude and longitude labels.
+The next step was to put the ISS latitude and longitude code into the ISS tracker code. It was deceptively easy, as I thought all I had to do was simply add in the one line to make sure it printed the latitude and longitude, but I tried for a solid 30 minutes, to no avail. I decided to ask an instructor for help. We worked together and he saw that simply adding the line that prints the latitude and longitude of the ISS wasn't enough. We both reviewed the code and added display labels for latitude and longitude, ensuring that get_location() returned four variables (x, y, lat, and lon) instead of just x and y. Additionally, we added code to update the latitude and longitude labels. 
 
 # Code for the ISS Position and Coordinate Tracker 
 
@@ -299,6 +303,7 @@ while True:
     time.sleep(0.5)
 
 ```
+The next step for my modification was to make a CSS tracker based on the ISS tracker. It was pretty hard. 
 
 making a full CSS tracker code with latlon based on the ISS tracker
 making the ISS or CSS tracker
