@@ -26,73 +26,68 @@ The second step, making code to track the latitude and longitude for the ISS, wa
 
 # Code to track the latitude and longitude of the ISS
 
-<div style="max-height:50px; overflow:auto">
-    
-```
-
-# Time lets the PyPortal connect to the internet and get the local time.
+```python
+# Only the changes will be commented on
 import time
-# Board is used to provide access to the hardware pins on the screen
 import board
-# FONT allows you to use custom fonts
 from terminalio import FONT
-# Label lets text be on the PyPortal display
 from adafruit_display_text.label import Label
-# PyPortal is imported to allow the usage of PyPortal objects
 from adafruit_pyportal import PyPortal
+# The settings.toml file had to be imported because you need a unique key to use the API
+from os import getenv
 
-# This is the API that the code is getting the latitude and longitude from
-url = ("http://api.open-notify.org/iss-now.json")
-print("Fetching ISS position from:", URL)
+# The key is being retrieved
+api_key = getenv("CIRCUITPY_N2YO_API_KEY")
+if not api_key:
+    raise ValueError("API key not found! Check your settings.toml file.")
 
-# This is the PyPortal object, setting the API url as the designated URL and the iss_position dictionary as the designated json path
+# The latitude and longitude of the user are needed for the API to work
+observer_lat = 37.7749     # Example: San Francisco
+observer_lon = -122.4194
+observer_alt = 0           # Altitude in meters
+
+# The latitude, longitude, and unique key are needed for the URL to display the API
+url = (
+    f"https://api.n2yo.com/rest/v1/satellite/positions/48274/{observer_lat}/{observer_lon}/{observer_alt}/1&apiKey={api_key}"
+)
+print("Fetching CSS Tianhe position from:", url)
+
 pyportal = PyPortal(
     url=url,
-    json_path=["iss_position"],
+    json_path=["positions", 0], # Different dictionary because of a different API
     status_neopixel=board.NEOPIXEL
 )
 
-# This code displays the latitude and longitude labels at (10, 40) and (10,70) on the PyPortal screen
 lat_label = Label(FONT, text="Lat: ---", color=0xFFFFFF, x=10, y=40)
 lon_label = Label(FONT, text="Lon: ---", color=0xFFFFFF, x=10, y=70)
-# This makes sure the PyPortal screen automatically refresh
 board.DISPLAY.auto_refresh = True
-# This makes sure the latitude and longitude labels update every so often
 pyportal.splash.append(lat_label)
 pyportal.splash.append(lon_label)
 
-# This code fetches the data from the URL and JSON path listed above
 def update_position():
     try:
         print("Fetching data...")
         data = pyportal.fetch()
         print("Raw response:", data)
 
-# This code tells you if the data isn't fetched from those locations
-        if not data:
-            raise ValueError("No data returned from API")
-
-# This code makes sure that the data taken from the website is printed on the screen with the correct formatting
-        lat = float(data["latitude"])
-        lon = float(data["longitude"])
+        lat = float(data["satlatitude"]) # Different API, Different key
+        lon = float(data["satlongitude"]) # Different API, Different key
         lat_label.text = f"Lat: {lat:.2f}"
         lon_label.text = f"Lon: {lon:.2f}"
-        print(f"ISS → Latitude: {lat}, Longitude: {lon}")
+        print(f"CSS Tianhe → Latitude: {lat}, Longitude: {lon}")
 
-# This code makes sure if there is an error, it says so
     except Exception as e:
         print("Error fetching location:", e)
         lat_label.text = "Lat: ERR"
         lon_label.text = "Lon: ERR"
 
-# The text is updated every 10 seconds 
 while True:
     update_position()
     time.sleep(10)
 ```
-The next step for me was to make the same code for the CSS Tianhe. It was pretty easy since I based the code on the ISS Latitude and Longitude tracker code. I only had to import the settings.toml file, change some variable names, and add my location in latitude and longitude.
+The next step for me was to make the same code for the CSS Tianhe. It was pretty easy, since I based the code on the ISS Latitude and Longitude tracker code. I only had to import the settings.toml file, change some variable names, and add my location in latitude and longitude.
 
-```
+```python
 # Only the changes will be commented on
 import time
 import board
@@ -152,8 +147,159 @@ while True:
     time.sleep(10)
 
 ```
-The next step was to put the ISS latitude and longitude code into the ISS tracker code. It was deceptively easy 
-putting that into the ISS tracker code
+The next step was to put the ISS latitude and longitude code into the ISS tracker code. It was deceptively easy, as I thought all I had to do was simply add in the one line to make sure it printed the latitude and longitude, but I tried for a solid 30 minutes, to no avail. I decided to ask an instructor for help. We worked together and he saw that simply adding the line that prints the latitude and longitude of the ISS wasn't enough. We both looked at the code and added the display labels of latitude and longitude, made sure get_location() returned 4 variables instead of 2 (x, y, lat, lon) instead of just x and y, and added code to update the latitude and longitude labels.
+
+# Code for the ISS Position and Coordinate Tracker 
+
+```python
+# Only the changes from the original will be commented on
+import time
+import math
+import board
+import displayio
+from terminalio import FONT
+from adafruit_pyportal import PyPortal
+from adafruit_display_shapes.circle import Circle
+from adafruit_display_text.label import Label
+
+
+MARK_SIZE = 10           
+MARK_COLOR = 0xFF3030    
+MARK_THICKNESS = 5       
+TRAIL_LENGTH = 200       
+TRAIL_COLOR = 0xFFFF00
+# Color of the    
+DATE_COLOR = 0x111111    
+TIME_COLOR = 0x111111   
+LAT_MAX = 80             
+UPDATE_RATE = 10         
+
+
+DATA_SOURCE = "http://api.open-notify.org/iss-now.json"
+DATA_LOCATION = ["iss_position"]
+
+WIDTH = board.DISPLAY.width
+HEIGHT = board.DISPLAY.height
+
+
+cwd = ("/"+__file__).rsplit('/', 1)[0]
+pyportal = PyPortal(url=DATA_SOURCE,
+                    json_path=DATA_LOCATION,
+                    status_neopixel=board.NEOPIXEL,
+                    text_font=None,
+                    default_bg=cwd+"/map.bmp") # This sets the Mercator projection bitmap as the background
+
+# Connect to the internet and get local time
+pyportal.get_local_time()
+
+# This displays the latitude and longitude values as text on the screen
+lat_label = Label(FONT, text=f"Lat: ---", color=0xFFFFFF, x=10, y=40)
+lon_label = Label(FONT, text=f"Lon: ---", color=0xFFFFFF, x=10, y=70)
+pyportal.splash.append(lat_label)
+pyportal.splash.append(lon_label)
+
+
+# Date and time label
+date_label = Label(FONT, text="0000-00-00", color=DATE_COLOR, x=165, y=223)
+time_label = Label(FONT, text="00:00:00", color=TIME_COLOR, x=240, y=223)
+pyportal.splash.append(date_label)
+pyportal.splash.append(time_label)
+
+# ISS trail
+trail_bitmap = displayio.Bitmap(3, 3, 1)
+trail_palette = displayio.Palette(1)
+trail_palette[0] = TRAIL_COLOR
+trail = displayio.Group()
+pyportal.splash.append(trail)
+
+# ISS location marker
+marker = displayio.Group()
+for r in range(MARK_SIZE - MARK_THICKNESS, MARK_SIZE):
+    marker.append(Circle(0, 0, r, outline=MARK_COLOR))
+pyportal.splash.append(marker)
+
+def get_location(width=WIDTH, height=HEIGHT):
+    """Fetch current lat/lon, convert to (x, y) tuple scaled to width/height."""
+
+    # Get location
+    try:
+        location = pyportal.fetch()
+    except RuntimeError:
+        return None, None
+
+    # Compute (x, y) coordinates
+    lat = float(location["latitude"])   # degrees, -90 to 90
+    lon = float(location["longitude"])  # degrees, -180 to 180
+
+    # Scale latitude for cropped map
+    lat *= 90 / LAT_MAX
+
+    # Mercator projection math
+    # https://stackoverflow.com/a/14457180
+    # https://en.wikipedia.org/wiki/Mercator_projection#Alternative_expressions
+    x = lon + 180
+    x = width * x / 360
+
+    y = math.radians(lat)
+    y = math.tan(math.pi / 4 + y / 2)
+    y = math.log(y)
+    y = (width * y) / (2 * math.pi)
+    y = height / 2 - y
+
+    return int(x), int(y), float(lat), float(lon) # New variables (lat, lon)
+
+def update_display(current_time, update_iss=False):
+    """Update the display with current info."""
+
+    # ISS location
+    if update_iss:
+        result = get_location()
+        if result and len(result) == 4: # Checks for 4 variables
+            x, y, lat, lon = result
+            if x is not None and y is not None:
+                marker.x = x
+                marker.y = y
+                if len(trail) >= TRAIL_LENGTH:
+                    trail.pop(0)
+                trail.append(displayio.TileGrid(trail_bitmap,
+                                                pixel_shader=trail_palette,
+                                                x = x - 1,
+                                                y = y - 1) )
+
+            # This is the formatting for the coordinates EX: (Lat/Lon: 135.26)
+            if isinstance(lat, float) and isinstance(lon, float):
+                lat_label.text = "Lat: {:.2f}".format(lat)
+                lon_label.text = "Lon: {:.2f}".format(lon)
+
+    date_label.text = "{:04}-{:02}-{:02}".format(current_time.tm_year,
+                                                 current_time.tm_mon,
+                                                 current_time.tm_mday)
+    time_label.text = "{:02}:{:02}:{:02}".format(current_time.tm_hour,
+                                                 current_time.tm_min,
+                                                 current_time.tm_sec)
+
+    try:
+        board.DISPLAY.refresh(target_frames_per_second=60)
+    except AttributeError:
+        board.DISPLAY.refresh_soon()
+
+
+# Initial refresh
+update_display(time.localtime(), True)
+last_update = time.monotonic()
+
+# Run forever
+while True:
+    now = time.monotonic()
+    new_position = False
+    if now - last_update > UPDATE_RATE:
+        new_position = True
+        last_update = now
+    update_display(time.localtime(), new_position)
+    time.sleep(0.5)
+
+```
+
 making a full CSS tracker code with latlon based on the ISS tracker
 making the ISS or CSS tracker
 
