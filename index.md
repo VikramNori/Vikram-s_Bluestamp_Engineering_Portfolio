@@ -25,7 +25,11 @@ The first step, finding the Satellite and API, was the simplest part of the proj
 The second step, making code to track the latitude and longitude for the ISS, was also quite simple. I took some code from the original ISS tracker code since it already stores the current latitude and longitude of the ISS. All I needed to do was ensure that it prints the latitude and longitude values that it's already storing.
 
 # Code to track the latitude and longitude of the ISS
-```python
+
+<div style="max-height:50px; overflow:auto">
+    
+```
+
 # Time lets the PyPortal connect to the internet and get the local time.
 import time
 # Board is used to provide access to the hardware pins on the screen
@@ -88,7 +92,7 @@ while True:
 ```
 The next step for me was to make the same code for the CSS Tianhe. It was pretty easy since I based the code on the ISS Latitude and Longitude tracker code. I only had to import the settings.toml file, change some variable names, and add my location in latitude and longitude.
 
-```python
+```
 # Only the changes will be commented on
 import time
 import board
@@ -148,7 +152,7 @@ while True:
     time.sleep(10)
 
 ```
-
+The next step was to put the ISS latitude and longitude code into the ISS tracker code. It was deceptively easy 
 putting that into the ISS tracker code
 making a full CSS tracker code with latlon based on the ISS tracker
 making the ISS or CSS tracker
