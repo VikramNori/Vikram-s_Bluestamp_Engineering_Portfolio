@@ -31,34 +31,19 @@ The second step, making code to track the latitude and longitude for the ISS, wa
 # Code to track the latitude and longitude of the ISS
 
 ```python
-# Only the changes will be commented on
 import time
 import board
 from terminalio import FONT
 from adafruit_display_text.label import Label
 from adafruit_pyportal import PyPortal
-# The settings.toml file had to be imported because you need a unique key to use the API
-from os import getenv
 
-# The key is being retrieved
-api_key = getenv("CIRCUITPY_N2YO_API_KEY")
-if not api_key:
-    raise ValueError("API key not found! Check your settings.toml file.")
 
-# The latitude and longitude of the user are needed for the API to work
-observer_lat = 37.7749     # Example: San Francisco
-observer_lon = -122.4194
-observer_alt = 0           # Altitude in meters
-
-# The latitude, longitude, and unique key are needed for the URL to display the API
-url = (
-    f"https://api.n2yo.com/rest/v1/satellite/positions/48274/{observer_lat}/{observer_lon}/{observer_alt}/1&apiKey={api_key}"
-)
-print("Fetching CSS Tianhe position from:", url)
+url = ("http://api.open-notify.org/iss-now.json")
+print("Fetching ISS position from:", url)
 
 pyportal = PyPortal(
     url=url,
-    json_path=["positions", 0], # Different dictionary because of a different API
+    json_path=["iss_position"],
     status_neopixel=board.NEOPIXEL
 )
 
@@ -73,12 +58,15 @@ def update_position():
         print("Fetching data...")
         data = pyportal.fetch()
         print("Raw response:", data)
+        
+        if not data:
+            raise ValueError("No data returned from API")
 
-        lat = float(data["satlatitude"]) # Different API, Different key
-        lon = float(data["satlongitude"]) # Different API, Different key
+        lat = float(data["latitude"])
+        lon = float(data["longitude"])
         lat_label.text = f"Lat: {lat:.2f}"
         lon_label.text = f"Lon: {lon:.2f}"
-        print(f"CSS Tianhe → Latitude: {lat}, Longitude: {lon}")
+        print(f"ISS → Latitude: {lat}, Longitude: {lon}")
 
     except Exception as e:
         print("Error fetching location:", e)
@@ -303,8 +291,7 @@ while True:
     time.sleep(0.5)
 
 ```
-The next step for my modification was to make a CSS tracker based on the ISS tracker. It was pretty hard. 
-
+The next step in my modification was to create a CSS tracker based on the ISS tracker, which proved to be quite challenging. It turned out that all the slight differences between the APIs added up to code that ended up being quite different when there were 150 lines of it. I didn't really know where to start. I decided a good starting point was to take the ISS position and coordinate tracker and change it bit by bit as if it were the Ship of Theseus. 
 making a full CSS tracker code with latlon based on the ISS tracker
 making the ISS or CSS tracker
 
