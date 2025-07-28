@@ -31,48 +31,62 @@ The second step, making code to track the latitude and longitude for the ISS, wa
 # Code to track the latitude and longitude of the ISS
 
 ```python
+# Time lets the PyPortal connect to the internet and get the local time.
 import time
+# Board is used to provide access to the hardware pins on the screen
 import board
+# FONT allows you to use custom fonts
 from terminalio import FONT
+# Label lets text be on the PyPortal display
 from adafruit_display_text.label import Label
+# PyPortal is imported to allow the usage of PyPortal objects
 from adafruit_pyportal import PyPortal
 
-
+# This is the API that the code is getting the latitude and longitude from
 url = ("http://api.open-notify.org/iss-now.json")
-print("Fetching ISS position from:", url)
+print("Fetching ISS position from:", URL)
 
+# This is the PyPortal object, setting the API url as the designated URL and the iss_position dictionary as the designated json path
 pyportal = PyPortal(
     url=url,
     json_path=["iss_position"],
     status_neopixel=board.NEOPIXEL
 )
 
+# This code displays the latitude and longitude labels at (10, 40) and (10,70) on the PyPortal screen
 lat_label = Label(FONT, text="Lat: ---", color=0xFFFFFF, x=10, y=40)
 lon_label = Label(FONT, text="Lon: ---", color=0xFFFFFF, x=10, y=70)
+# This makes sure the PyPortal screen automatically refresh
 board.DISPLAY.auto_refresh = True
+# This makes sure the latitude and longitude labels update every so often
 pyportal.splash.append(lat_label)
 pyportal.splash.append(lon_label)
 
+# This code fetches the data from the URL and JSON path listed above
 def update_position():
     try:
         print("Fetching data...")
         data = pyportal.fetch()
         print("Raw response:", data)
-        
+
+# This code tells you if the data isn't fetched from those locations
         if not data:
             raise ValueError("No data returned from API")
 
+# This code makes sure that the data taken from the website is printed on the screen with the correct formatting
         lat = float(data["latitude"])
         lon = float(data["longitude"])
         lat_label.text = f"Lat: {lat:.2f}"
         lon_label.text = f"Lon: {lon:.2f}"
         print(f"ISS → Latitude: {lat}, Longitude: {lon}")
 
+# This code makes sure if there is an error, it says so
     except Exception as e:
         print("Error fetching location:", e)
         lat_label.text = "Lat: ERR"
         lon_label.text = "Lon: ERR"
 
+# The text is updated every 10 seconds 
 while True:
     update_position()
     time.sleep(10)
