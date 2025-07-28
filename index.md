@@ -193,9 +193,8 @@ pyportal = PyPortal(url=DATA_SOURCE,
                     json_path=DATA_LOCATION,
                     status_neopixel=board.NEOPIXEL,
                     text_font=None,
-                    default_bg=cwd+"/map.bmp") # This sets the Mercator projection bitmap as the background
+                    default_bg=cwd+"/map.bmp")
 
-# Connect to the internet and get local time
 pyportal.get_local_time()
 
 # This displays the latitude and longitude values as text on the screen
@@ -204,21 +203,17 @@ lon_label = Label(FONT, text=f"Lon: ---", color=0xFFFFFF, x=10, y=70)
 pyportal.splash.append(lat_label)
 pyportal.splash.append(lon_label)
 
-
-# Date and time label
 date_label = Label(FONT, text="0000-00-00", color=DATE_COLOR, x=165, y=223)
 time_label = Label(FONT, text="00:00:00", color=TIME_COLOR, x=240, y=223)
 pyportal.splash.append(date_label)
 pyportal.splash.append(time_label)
 
-# ISS trail
 trail_bitmap = displayio.Bitmap(3, 3, 1)
 trail_palette = displayio.Palette(1)
 trail_palette[0] = TRAIL_COLOR
 trail = displayio.Group()
 pyportal.splash.append(trail)
 
-# ISS location marker
 marker = displayio.Group()
 for r in range(MARK_SIZE - MARK_THICKNESS, MARK_SIZE):
     marker.append(Circle(0, 0, r, outline=MARK_COLOR))
@@ -240,9 +235,6 @@ def get_location(width=WIDTH, height=HEIGHT):
     # Scale latitude for cropped map
     lat *= 90 / LAT_MAX
 
-    # Mercator projection math
-    # https://stackoverflow.com/a/14457180
-    # https://en.wikipedia.org/wiki/Mercator_projection#Alternative_expressions
     x = lon + 180
     x = width * x / 360
 
@@ -290,11 +282,9 @@ def update_display(current_time, update_iss=False):
         board.DISPLAY.refresh_soon()
 
 
-# Initial refresh
 update_display(time.localtime(), True)
 last_update = time.monotonic()
 
-# Run forever
 while True:
     now = time.monotonic()
     new_position = False
@@ -305,7 +295,9 @@ while True:
     time.sleep(0.5)
 
 ```
-The next step in my modification was to create a CSS tracker based on the ISS tracker, which proved to be quite challenging. It turned out that all the slight differences between the APIs added up to code that ended up being quite different when there were 150 lines of it. I didn't really know where to start. I decided a good starting point was to take the ISS position and coordinate tracker and change it bit by bit as if it were the Ship of Theseus. 
+The next step in my modification was to create a CSS tracker based on the ISS tracker, which proved to be quite challenging. It turned out that all the slight differences between the APIs added up to code that ended up being quite different when there were 150 lines of it. I wasn't sure where to begin. I decided a good starting point was to take the ISS position and coordinate tracker and change it bit by bit as if it were the Ship of Theseus. Unlike the ship, it remained largely intact. This was quite hard, so I ran into multiple errors while 
+
+
 making a full CSS tracker code with latlon based on the ISS tracker
 making the ISS or CSS tracker
 
