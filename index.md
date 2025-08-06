@@ -10,6 +10,9 @@ Have you ever thought about the International Space Station? The permanently man
 
 # Ending Comments
 
+# Demo Night Video
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/vK8ETdXt380?si=YDQwGjyrTrlyW7qJ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 <!--
 For your final milestone, explain the outcome of your project. Key details to include are:
@@ -295,7 +298,7 @@ while True:
     time.sleep(0.5)
 
 ```
-The next step in my modification was to create a CSS tracker based on the ISS tracker, which proved to be quite challenging. It turned out that all the slight differences between the APIs added up to code that ended up being quite different when there were 150 lines of it. I wasn't sure where to begin. I decided a good starting point was to take the ISS position and coordinate tracker and change it bit by bit as if it were the Ship of Theseus. Unlike the ship, it remained largely intact. This was quite hard, so I ran into multiple errors while 
+The next step in my modification was to create a CSS tracker based on the ISS tracker, which proved to be quite challenging. It turned out that all the slight differences between the APIs added up to code that ended up being quite different when there were 150 lines of it. I wasn't sure where to begin. I decided a good starting point was to take the ISS position and coordinate tracker and change it bit by bit as if it were the Ship of Theseus. Unlike the ship, it remained largely intact. This was quite hard, so I ran into multiple errors while trying to find the lines to change one by one. It was pretty long and tedious 
 
 
 making a full CSS tracker code with latlon based on the ISS tracker
