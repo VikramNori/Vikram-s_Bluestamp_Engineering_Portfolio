@@ -298,7 +298,165 @@ while True:
     time.sleep(0.5)
 
 ```
-The next step in my modification was to create a CSS tracker based on the ISS tracker, which proved to be quite challenging. It turned out that all the slight differences between the APIs added up to code that ended up being quite different when there were 150 lines of it. I wasn't sure where to begin. I decided a good starting point was to take the ISS position and coordinate tracker and change it bit by bit as if it were the Ship of Theseus. Unlike the ship, it remained largely intact. This was quite hard, so I ran into multiple errors while trying to find the lines to change one by one. It was pretty long and tedious 
+The next step in my modification was to create a CSS tracker based on the ISS tracker, which proved to be quite challenging. It turned out that all the slight differences between the APIs added up to code that ended up being quite different when there were 150 lines of it. I wasn't sure where to begin. I decided a good starting point was to take the ISS position and coordinate tracker and change it bit by bit as if it were the Ship of Theseus. Unlike the ship, it remained largely intact. This was quite hard, so I ran into multiple errors while trying to find the lines to change one by one. It was pretty long and tedious, and I needed some help to find what exactly to change, but I ultimately pulled it off with some help.
+
+```python
+# Only the changes will be commented on
+import time
+import math
+import board
+from os import getenv # Needed for pulling the API key from the settings.toml file
+import displayio
+from terminalio import FONT
+from adafruit_pyportal import PyPortal
+from adafruit_display_shapes.circle import Circle
+from adafruit_display_text.label import Label
+
+MARK_SIZE = 10           
+MARK_COLOR = 0x4B6043    
+MARK_THICKNESS = 5       
+TRAIL_LENGTH = 75       
+TRAIL_COLOR = 0xFFFF00
+# Color of the    
+DATE_COLOR = 0x111111    
+TIME_COLOR = 0x111111   
+LAT_MAX = 80             
+UPDATE_RATE = 10
+
+# Unlike the ISS Tracker which uses Open Notify, the CSS Tracker uses N2YO and needs a specific key, and it returns an error if that key is not found
+api_key = getenv("CIRCUITPY_N2YO_API_KEY")
+if not api_key:
+    raise ValueError("API key not found! Check your settings.toml file.")
+
+# You need the observer's coordinated in order to use N2YO API
+observer_lat = 37.3393     # Example: San Francisco
+observer_lon = -121.8949
+observer_alt = 0           # Altitude in meters
+
+# The URL isn't just some string, it also contains a bunch of variables introduced earlier in the code to function
+url = (
+    f"https://api.n2yo.com/rest/v1/satellite/positions/48274/{observer_lat}/{observer_lon}/{observer_alt}/1?apiKey={api_key}"
+)
+print("Fetching CSS Tianhe position from:", url)
+
+WIDTH = board.DISPLAY.width
+HEIGHT = board.DISPLAY.height
+
+cwd = ("/"+__file__).rsplit('/', 1)[0]
+pyportal = PyPortal(
+    url=url,
+    json_path=["positions", 0], # positions, 0 instead of iss_positions is used for the JSON path
+    status_neopixel=board.NEOPIXEL,
+    text_font=None,
+    default_bg=cwd+"/map.bmp"
+)
+
+pyportal.get_local_time()
+
+lat_label = Label(FONT, text="Lat: ---", color=0xFFFFFF, x=10, y=40)
+lon_label = Label(FONT, text="Lon: ---", color=0xFFFFFF, x=10, y=70)
+board.DISPLAY.auto_refresh = True
+pyportal.splash.append(lat_label)
+pyportal.splash.append(lon_label)
+
+
+date_label = Label(FONT, text="0000-00-00", color=DATE_COLOR, x=165, y=223)
+time_label = Label(FONT, text="00:00:00", color=TIME_COLOR, x=240, y=223)
+pyportal.splash.append(date_label)
+pyportal.splash.append(time_label)
+
+trail_bitmap = displayio.Bitmap(3, 3, 1)
+trail_palette = displayio.Palette(1)
+trail_palette[0] = TRAIL_COLOR
+trail = displayio.Group()
+pyportal.splash.append(trail)
+
+marker = displayio.Group()
+for r in range(MARK_SIZE - MARK_THICKNESS, MARK_SIZE):
+    marker.append(Circle(0, 0, r, outline=MARK_COLOR))
+pyportal.splash.append(marker)
+
+
+def get_location(width=WIDTH, height=HEIGHT):
+    """Fetch current lat/lon, convert to (x, y) tuple scaled to width/height."""
+
+    # Get location
+    try:
+        location = pyportal.fetch()
+    except RuntimeError:
+        return None, None
+
+    # Compute (x, y) coordinates
+    lat = float(location["satlatitude"])   # degrees, -90 to 90
+    lon = float(location["satlongitude"])  # degrees, -180 to 180
+
+    # Scale latitude for cropped map
+    lat *= 90 / LAT_MAX
+
+    # Mercator projection math
+    # https://stackoverflow.com/a/14457180
+    # https://en.wikipedia.org/wiki/Mercator_projection#Alternative_expressions
+    x = lon + 180
+    x = width * x / 360
+
+    y = math.radians(lat)
+    y = math.tan(math.pi / 4 + y / 2)
+    y = math.log(y)
+    y = (width * y) / (2 * math.pi)
+    y = height / 2 - y
+
+    return int(x), int(y), float(lat), float(lon)
+
+
+def update_display(current_time, update_iss=False):
+    """Update the display with current info."""
+
+    # ISS location
+    if update_iss:
+        result = get_location()
+        if result and len(result) == 4:
+            x, y, lat, lon = result
+            if x is not None and y is not None:
+                marker.x = x
+                marker.y = y
+                if len(trail) >= TRAIL_LENGTH:
+                    trail.pop(0)
+                trail.append(displayio.TileGrid(trail_bitmap,
+                                                pixel_shader=trail_palette,
+                                                x = x - 1,
+                                                y = y - 1) )
+            # Safe coordinate formatting
+            if isinstance(lat, float) and isinstance(lon, float):
+                lat_label.text = "Lat: {:.2f}".format(lat)
+                lon_label.text = "Lon: {:.2f}".format(lon)
+
+    date_label.text = "{:04}-{:02}-{:02}".format(current_time.tm_year,
+                                                 current_time.tm_mon,
+                                                 current_time.tm_mday)
+    time_label.text = "{:02}:{:02}:{:02}".format(current_time.tm_hour,
+                                                 current_time.tm_min,
+                                                 current_time.tm_sec)
+
+    try:
+        board.DISPLAY.refresh(target_frames_per_second=60)
+    except AttributeError:
+        board.DISPLAY.refresh_soon()
+
+update_display(time.localtime(), True)
+last_update = time.monotonic()
+
+# Run forever
+while True:
+    now = time.monotonic()
+    new_position = False
+    if now - last_update > UPDATE_RATE:
+        new_position = True
+        last_update = now
+    update_display(time.localtime(), new_position)
+    time.sleep(0.5)
+```
+
+
 
 
 making a full CSS tracker code with latlon based on the ISS tracker
