@@ -177,7 +177,7 @@ MARK_COLOR = 0xFF3030
 MARK_THICKNESS = 5       
 TRAIL_LENGTH = 200       
 TRAIL_COLOR = 0xFFFF00
-# Color of the    
+# Color of the date and time text   
 DATE_COLOR = 0x111111    
 TIME_COLOR = 0x111111   
 LAT_MAX = 80             
@@ -298,7 +298,7 @@ while True:
     time.sleep(0.5)
 
 ```
-The next step in my modification was to create a CSS tracker based on the ISS tracker, which proved to be quite challenging. It turned out that all the slight differences between the APIs added up to code that ended up being quite different when there were 150 lines of it. I wasn't sure where to begin. I decided a good starting point was to take the ISS position and coordinate tracker and change it bit by bit as if it were the Ship of Theseus. Unlike the ship, it remained largely intact. This was quite hard, so I ran into multiple errors while trying to find the lines to change one by one. It was pretty long and tedious, and I needed some help to find what exactly to change, but I ultimately pulled it off with some help.
+The next step in my modification was to create a CSS tracker based on the ISS tracker, which proved to be quite challenging. It turned out that all the slight differences between the APIs added up to code that ended up being quite different when there were 150 lines of it. I wasn't sure where to begin. I decided a good starting point was to take the ISS position and the coordinate tracker and change it bit by bit as if it were the Ship of Theseus. Unlike the ship, it remained largely intact. This was quite hard, so I ran into multiple errors while trying to find the lines to change one by one. It was pretty long and tedious, and I needed some help to find what exactly to change, but I ultimately pulled it off with some help.
 
 ```python
 # Only the changes will be commented on
@@ -333,7 +333,7 @@ observer_lat = 37.3393     # Example: San Francisco
 observer_lon = -121.8949
 observer_alt = 0           # Altitude in meters
 
-# The URL isn't just some string, it also contains a bunch of variables introduced earlier in the code to function
+# The URL isn't just some string; it also contains a bunch of variables introduced earlier in the code to function
 url = (
     f"https://api.n2yo.com/rest/v1/satellite/positions/48274/{observer_lat}/{observer_lon}/{observer_alt}/1?apiKey={api_key}"
 )
@@ -387,6 +387,7 @@ def get_location(width=WIDTH, height=HEIGHT):
         return None, None
 
     # Compute (x, y) coordinates
+    # Needed be
     lat = float(location["satlatitude"])   # degrees, -90 to 90
     lon = float(location["satlongitude"])  # degrees, -180 to 180
 
