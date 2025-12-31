@@ -9,7 +9,7 @@ Have you ever thought about the International Space Station? The permanently man
 
 
 # Ending Comments
-
+All in all, Bluestamp was a wonderful and eye-opening experience for me. It taught me about APIs, Python programming, PyPortals, the ISS and so much more. I came here since I was uncertain in what field of engineering I would be in, but these 6 weeks have made me certain that I'd go into Aerospace. It helped me a ton.
 # Demo Night Video
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/vK8ETdXt380?si=YDQwGjyrTrlyW7qJ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
@@ -462,6 +462,7 @@ while True:
 
 making a full CSS tracker code with latlon based on the ISS tracker
 making the ISS or CSS tracker
+Due to 
 
 
 # Final Milestone 
