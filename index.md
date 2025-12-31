@@ -461,8 +461,9 @@ while True:
 
 
 making a full CSS tracker code with latlon based on the ISS tracker
+
 making the ISS or CSS tracker
-Due to 
+I was originally going to combine the 2 codes and make a tracker that tracked both the ISS and CSS at the same time, however, that would require 2 pyportal objects to be active at the same time 
 
 
 # Final Milestone 
