@@ -24,7 +24,7 @@ For your final milestone, explain the outcome of your project. Key details to in
 
 # Modification
 
-My modification for this project was to enable it to track both the CSS Tianhe and the ISS simultaneously in the same code and display the latitude and longitude of both space stations on the BitMap in real-time.
+My modification for this project was to enable it to track both the CSS Tianhe and the ISS simultaneously in the same code and display the latitude and longitude of both space stations on the BitMap in real-time. However, the modification ended up being able to display the latitude and longitude of the ISS and CSS, but not simultaneously. The code displays the ISS and the CSS but it only displays one at a time.
 
 # Step by Step Process
 The first step, finding the Satellite and API, was the simplest part of the project. I spent some time searching for a satellite with an API, or an Application Programming Interface, that can easily be coded to track its location in real time. After a little bit of research, I found an N2YO API that tracks the CSS Tianhe. However, there are some differences between Open Notify, which I used for the ISS, and N2YO, which I used to track the CSS. There are some differences between N2YO and Open Notify, which warrant some differences in code, such as authentication and your location in longitude and latitude being required to use the API. 
